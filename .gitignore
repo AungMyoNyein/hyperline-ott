@@ -1,0 +1,28 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Laravel
+services/api/vendor/
+services/api/node_modules/
+services/api/.env
+services/api/storage/logs/*.log
+services/api/storage/framework/cache/data/*
+services/api/storage/framework/sessions/*
+services/api/storage/framework/views/*
+services/api/storage/app/public/*
+services/api/bootstrap/cache/*.php
+
+# Next.js
+apps/*/node_modules/
+apps/*/.next/
+apps/*/out/
+apps/*/.turbo/
+apps/*/*.tsbuildinfo
+apps/*/.env*
+!apps/*/.env.example
+
+# OS/editor
+.DS_Store
+*.swp

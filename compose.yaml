@@ -1,0 +1,77 @@
+name: hyperline
+services:
+  gateway:
+    image: nginx:1.27-alpine
+    ports: ["127.0.0.1:18080:80"]
+    volumes:
+      - ./infra/nginx/conf.d:/etc/nginx/conf.d:ro
+      - api_public:/var/www/html/public:ro
+    depends_on: [web,cms,api]
+    restart: unless-stopped
+    networks: [frontend]
+  web:
+    build: {context: ./apps/web, args: {NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL}"}}
+    restart: unless-stopped
+    networks: [frontend]
+  cms:
+    build: {context: ./apps/cms, args: {NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL}"}}
+    restart: unless-stopped
+    networks: [frontend]
+  api:
+    build: ./services/api
+    env_file: .env
+    volumes: [api_storage:/var/www/html/storage, api_public:/var/www/html/public]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    restart: unless-stopped
+    networks: [frontend,backend]
+  worker:
+    build: ./services/api
+    command: php artisan queue:work redis --sleep=3 --tries=3 --timeout=90
+    env_file: .env
+    volumes: [api_storage:/var/www/html/storage]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    restart: unless-stopped
+    networks: [backend]
+  scheduler:
+    build: ./services/api
+    command: sh -c 'while true; do php artisan schedule:run --no-interaction; sleep 60; done'
+    env_file: .env
+    volumes: [api_storage:/var/www/html/storage]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    restart: unless-stopped
+    networks: [backend]
+  postgres:
+    image: postgres:16-alpine
+    environment: {POSTGRES_DB: "${POSTGRES_DB}",POSTGRES_USER: "${POSTGRES_USER}",POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      retries: 10
+    restart: unless-stopped
+    networks: [backend]
+  redis:
+    image: redis:7-alpine
+    command: ["sh","-c","exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD""]
+    environment: {REDIS_PASSWORD: "${REDIS_PASSWORD}"}
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD-SHELL","redis-cli -a "$$REDIS_PASSWORD" ping | grep -q PONG"]
+      interval: 10s
+      retries: 10
+    restart: unless-stopped
+    networks: [backend]
+networks:
+  frontend: {}
+  backend: {internal: true}
+volumes:
+  pgdata: {}
+  redisdata: {}
+  api_storage: {}
+  api_public: {}

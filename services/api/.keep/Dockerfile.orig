@@ -1,0 +1,10 @@
+FROM php:8.3-fpm-bookworm
+RUN apt-get update && apt-get install -y --no-install-recommends git unzip libpq-dev libicu-dev libzip-dev && docker-php-ext-install pdo_pgsql bcmath intl zip opcache && rm -rf /var/lib/apt/lists/*
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+WORKDIR /var/www/html
+RUN composer create-project laravel/laravel:^12.0 /var/www/html --no-dev --no-interaction --prefer-dist
+RUN composer require laravel/sanctum:^4.0 predis/predis:^3.0 --no-interaction --no-progress
+COPY overlay/ /var/www/html/
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache && chown -R www-data:www-data storage bootstrap/cache && php artisan config:clear
+EXPOSE 9000
+CMD ["php-fpm"]
