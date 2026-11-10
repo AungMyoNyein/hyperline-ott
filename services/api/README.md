@@ -1,59 +1,27 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# HyperLine Laravel API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The API exposes routes under `/api/v1`: public health, home, movie catalog and slug detail, genres and search; subscriber registration/login/logout, profile, watchlist, progress, playback sessions and token renewal; administrator login/logout, dashboard, movie CRUD and audit logs. Run `php artisan route:list --path=api` for methods and paths.
 
-## About Laravel
+JSON responses wrap resources in `data`. Login returns `data.token`. Movie metadata uses `synopsis`; stream inputs use `sources` (an array containing `label`, `kind`, `url`, and optional quality/language/default/enabled fields). Playback requires a bearer token and `POST /api/v1/playback/sessions` with `movie_id`; the URL is returned in `data.url`. There is no public legacy movie playback endpoint.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Local development
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Run commands from `services/api`. Copy `.env.example` to `.env` only if absent. Generate `php artisan key:generate` only if APP_KEY is empty; never rotate an existing stack key. Create `database/database.sqlite` only if absent, then run `php artisan migrate --force` and `php artisan serve`. This local SQLite database is separate from Docker PostgreSQL. Local secrets and SQLite files are ignored by Git.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+`php artisan test` uses a disposable in-memory SQLite database, never Docker PostgreSQL. Movie create/update/delete operations include related sources, genres and audit logs in a transaction.
 
-## Learning Laravel
+## Existing Docker stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+From the repository root, use `docker compose exec -T api php artisan migrate --force` for pending migrations and `docker compose exec -T api php artisan migrate:status` to inspect them. Do not use fresh/reset/refresh migrations or remove volumes. Check health using `curl -H 'Host: api.zentunnel.net' http://127.0.0.1:18080/api/v1/health`. This is liveness; migration status checks database connectivity separately.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Frontend and CDN integration
 
-## Laravel Sponsors
+The CMS and OTT web use the current API contract. See [frontend integration](../../docs/FRONTEND-INTEGRATION.md) for configuration, UI scope, and isolated browser tests. Production playback targets the existing CDN using `ExistingCdnPlaybackSigner` and an operator-specific `ExistingCdnAuthorizer`; the default unconfigured adapter refuses playback with 503. No additional CDN or origin is required. Mock signer tests verify the contract without real CDN credentials. See [CDN playback](../../docs/CDN-PLAYBACK.md) for origin protection, expiry and CORS requirements.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Worker/scheduler source now has role-specific heartbeat/process/database/Redis probes and scheduler signal handling. Current running images retain the old probes until an approved rollout. See ../../docs/DEPLOYMENT-READINESS-RESULTS.md.
 
-### Premium Partners
+Source edits require a separate image rebuild/recreation to take effect in running containers. No host Nginx, DNS, certificates, or existing Zentunnel services need changes for these local checks.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Phase 1 follow-through
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+See [implementation contracts and model decisions](../../docs/PHASE-1-IMPLEMENTATION.md) and [current checks](../../docs/PHASE-1-VALIDATION.md). Token lifetimes are clamped to 1–10080 minutes (default 1440). Movie progress accepts an optional movie_id query filter; saved reads hide unpublished titles. HLS/MP4/DASH are supported playback transports; `youtube` sources are returned unsigned (public embeds) while entitlement checks still gate session creation. No Phase 1 schema changes are required.

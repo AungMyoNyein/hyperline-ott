@@ -1,0 +1,7 @@
+{
+  "42": {
+    "movie_id": 7,
+    "origin_directory": "/vod/authorized_title/",
+    "manifest": "master.m3u8"
+  }
+}

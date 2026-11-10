@@ -37,7 +37,9 @@ return [
     |
     */
 
-    'guard' => ['web'],
+    // The current OTT/CMS clients use in-memory bearer tokens, not cookie login.
+    // A Laravel web session must not bypass the API token's absolute lifetime.
+    'guard' => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -50,7 +52,9 @@ return [
     |
     */
 
-    'expiration' => null,
+    // Absolute minutes from creation, clamped to 1–10080 (seven days).
+    // Zero cannot disable expiry; normal use never slides the deadline.
+    'expiration' => min(10080, max(1, (int) env('SANCTUM_TOKEN_EXPIRATION', 1440))),
 
     /*
     |--------------------------------------------------------------------------

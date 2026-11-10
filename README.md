@@ -1,6 +1,6 @@
-# HyperLine OTT Phase 1 — integrated source scaffold
+# HyperLine OTT Phase 1
 
-**IMPORTANT: No deployment was performed on 157.85.104.49.** The domain zentunnel.net is already used by another service. This stack binds ONLY 127.0.0.1:18080 and must be attached to the **existing** reverse proxy using the new subdomains ott.zentunnel.net, cms.zentunnel.net, api.zentunnel.net. Do not replace the existing zentunnel.net virtual host or bind Docker directly to 80/443.
+**IMPORTANT: Preserve existing production Zentunnel VPN, CDN and origin services.** The domain zentunnel.net is already used by another service. This stack binds ONLY 127.0.0.1:18080 and must be attached to the **existing** reverse proxy using the new subdomains ott.zentunnel.net, cms.zentunnel.net, api.zentunnel.net. Do not replace the existing zentunnel.net virtual host or bind Docker directly to 80/443.
 
 ## Prerequisites
 Ubuntu 24.04, Docker Engine + Compose V2, working DNS A records for the three subdomains pointing to 157.85.104.49, existing host reverse proxy with HTTPS and certificates. The existing CDN must allow CORS for https://ott.zentunnel.net.
@@ -41,11 +41,32 @@ curl -i https://api.zentunnel.net/api/v1/movies
 curl -I -H 'Origin: https://ott.zentunnel.net' 'https://cdn.goldendragon2000.com/vod/Hollywood_Movies/2024/May/Week4/The_Wolf_of_Wall_Street_2013_1/playlist.m3u8'
 ```
 
+## Existing video infrastructure
+
+Use the existing `https://cdn.goldendragon2000.com` HLS URLs through the Admin CMS. No additional CDN, origin, virtual host or CDN DNS alias is required. The prior same-site cookie/new-host proposal is superseded and must not be deployed. Production playback remains fail-closed pending confirmation of the existing CDN's actual access protocol. See [current integration](docs/CDN-PLAYBACK.md), [application environment template](deploy/existing-cdn.env.example) and [remaining blockers](docs/DEPLOYMENT-BLOCKERS.md).
+
 ## CDN sample
 Do not automatically publish the provided third-party video URL. Confirm rights and CDN authorization, then add the HLS URL in CMS. Browser HLS requires CORS on manifests and all segments. The app does not download, cache or rehost CDN video.
 
+## Phase 1 completion
+
+See [implementation and architecture decisions](docs/PHASE-1-IMPLEMENTATION.md) and [current validation](docs/PHASE-1-VALIDATION.md). My List, throttled movie progress/resume/completion, CMS filters/inline validation/unsaved protection/audit history and bounded token lifetimes extend the existing stack. HLS and MP4 are eligible for playback; DASH metadata is preserved and marked unsupported. Later phases remain separate.
+
 ## Scope and limitations
-Implemented: Laravel 12 source overlays (generated at Docker build), PostgreSQL movie migration, Sanctum bearer login for admin, RBAC gate, movie CRUD, public movie listing and HLS playback URL, CMS editor, Next.js catalog and HLS.js player. Laravel dependencies are downloaded during Docker build; Internet access required. No build or runtime integration test has been performed here. **Not yet production-ready**: subscriber auth/entitlements, signed CDN URLs, detailed audit logs, TV series, EPG, subscription billing, refresh/revocation UX, backup automation, observability, security review, and production load tests. Public playback endpoint currently reveals CDN URL for published content. Restrict publishing to authorized/public streams until entitlement protection is added. Browser CMS bearer token is kept in memory and lost on refresh; do not use shared/public devices.
+
+Phase 1 includes a Laravel 12 API with Sanctum bearer authentication, RBAC, PostgreSQL migrations, admin movie/source CRUD, audit logs, public catalog/search, watchlist/progress and entitlement checks. The Next.js CMS integrates dashboard, authentication, movie editing, publishing, genre assignment and source management. The OTT web integrates home sections, catalog/search/filters, movie details, registration/login and an authenticated HLS player using the supplied logo and a responsive Black + Red theme.
+
+Protected production playback requires a CDN signing provider. No signing credentials or algorithm are assumed: without a configured provider the updated API returns 503 and never falls back to an unsigned origin. Existing running Docker images are not automatically updated by these source changes. Native HLS device testing, actual CDN authorization/CORS, billing, backup automation, observability and production load testing remain outstanding. Genre creation/deletion has no API support; CMS assigns existing genres. Tokens remain in React memory and are lost on refresh.
+
+See [frontend integration and browser tests](docs/FRONTEND-INTEGRATION.md) and [CDN signing contract](docs/CDN-PLAYBACK.md). Isolated browser tests generate original test-pattern media and use a dedicated temporary SQLite database. Source builds and tests do not modify existing production Zentunnel services or Docker volumes.
 
 ## Backups
 Back up PostgreSQL with `docker compose exec -T postgres pg_dump -U hyperline hyperline > hyperline-$(date +%F).sql` and store encrypted off-server. Also back up `.env` securely. Test restoration separately.
+
+## Deployment readiness and scoped maintenance review
+
+See [readiness results](docs/DEPLOYMENT-READINESS-RESULTS.md), [Zentunnel web/admin maintenance proposal](docs/ZENTUNNEL-SHUTDOWN-REVIEW.md) and [HyperLine deployment plan](docs/HYPERLINE-DEPLOYMENT-PLAN.md). No production shutdown, Nginx change or application deployment is performed automatically. The shared VPN/device API remains running; only website/admin maintenance is proposed.
+
+## HTTPS staging review
+
+DNS now resolves the three application names. Separate per-host HTTPS/ACME staging files are in [deploy/https](deploy/https/README.md); see [HTTPS review](docs/HYPERLINE-HTTPS-REVIEW.md) and [approval-only operations](deploy/https/OPERATIONS.md). No installation, certificate issuance or production reload has been performed.

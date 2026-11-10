@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +31,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'subscription_expires_at' => now()->addYear(),
         ];
     }
 
@@ -40,6 +42,42 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function withRole(string $slug = Role::SUBSCRIBER): static
+    {
+        return $this->afterCreating(function (User $user) use ($slug) {
+            $role = Role::firstOrCreate(
+                ['slug' => $slug],
+                ['name' => Str::title($slug)],
+            );
+
+            $user->roles()->syncWithoutDetaching([$role->id]);
+        });
+    }
+
+    public function subscriber(): static
+    {
+        return $this->withRole(Role::SUBSCRIBER);
+    }
+
+    public function administrator(): static
+    {
+        return $this->withRole(Role::ADMIN);
+    }
+
+    public function expiredSubscription(): static
+    {
+        return $this->state(fn () => [
+            'subscription_expires_at' => now()->subDay(),
+        ]);
+    }
+
+    public function lifetimeAccess(): static
+    {
+        return $this->state(fn () => [
+            'subscription_expires_at' => null,
         ]);
     }
 }

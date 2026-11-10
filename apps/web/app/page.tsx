@@ -1,3 +1,80 @@
-import Link from 'next/link';
-type Movie={id:number;title:string;poster_url?:string;description?:string};
-export default async function Home(){let movies:Movie[]=[];try{const r=await fetch(`${process.env.NEXT_PUBLIC_API_URL}/movies`,{cache:'no-store'});if(r.ok){const j=await r.json();movies=j.data||[]}}catch{}return <><header><img src="/hl-logo.png" alt="HL" width="48" height="48"/><span className="brand">HYPERLINE OTT</span><nav><Link href="/">Home</Link></nav></header><main><section className="hero"><h1>Unlimited stories. One destination.</h1><p className="muted">HyperLine OTT · Premium entertainment</p></section><h2 style={{marginTop:35}}>Latest movies</h2><div className="grid">{movies.map(m=><Link className="card" href={`/watch?id=${m.id}`} key={m.id}>{m.poster_url&&<img src={m.poster_url} alt={m.title}/>}<p>{m.title}</p></Link>)}</div>{movies.length===0&&<p className="muted">No published movies yet. Add titles through the CMS.</p>}</main></>}
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { api, ContinueWatchingItem, errorText, Movie, Series } from "../lib/api";
+import { ContinueWatchingRow, MovieRow, SeriesRow } from "./cards";
+import { useSession } from "./session";
+type Home = {
+  hero: Movie | null;
+  featured: Movie[];
+  trending: Movie[];
+  latest: Movie[];
+  series?: Series[];
+  continue_watching: ContinueWatchingItem[];
+};
+export default function HomePage() {
+  const { token } = useSession();
+  const [data, setData] = useState<Home | null>(null);
+  const [error, setError] = useState("");
+  const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    const c = new AbortController();
+    setError("");
+    setData(null);
+    api<{ data: Home }>("/home", token, { signal: c.signal })
+      .then((j) => setData(j.data))
+      .catch((e) => {
+        if (!c.signal.aborted) setError(errorText(e));
+      });
+    return () => c.abort();
+  }, [token, revision]);
+  return (
+    <main>
+      {error ? (
+        <div role="alert" className="error">
+          {error}
+          <button onClick={() => setRevision((r) => r + 1)}>Retry</button>
+        </div>
+      ) : !data ? (
+        <p role="status">Loading your next story…</p>
+      ) : (
+        <>
+          <section
+            className="hero"
+            style={
+              data.hero?.backdrop_url
+                ? {
+                    backgroundImage: `linear-gradient(90deg, #080808ee, #08080866), url(${JSON.stringify(data.hero.backdrop_url)})`,
+                  }
+                : undefined
+            }
+          >
+            <div className="hero-inner">
+              <p className="eyebrow">THE HYPERLINE SPOTLIGHT</p>
+              <h1>{data.hero?.title || "Stories that stay with you."}</h1>
+              <p>
+                {data.hero?.synopsis ||
+                  "Explore a world of cinema. Find your next favorite."}
+              </p>
+              <Link
+                className="button"
+                href={data.hero ? `/movies/${data.hero.slug}` : "/movies"}
+              >
+                {data.hero ? "Explore movie" : "Explore movies"}
+              </Link>
+            </div>
+          </section>
+          {data.continue_watching.length > 0 && (
+            <ContinueWatchingRow items={data.continue_watching} />
+          )}
+          <MovieRow title="Featured movies" movies={data.featured} />
+          {!!data.series?.length && (
+            <SeriesRow title="Series" series={data.series} />
+          )}
+          <MovieRow title="Trending now" movies={data.trending} />
+          <MovieRow title="Recently added" movies={data.latest} />
+        </>
+      )}
+    </main>
+  );
+}

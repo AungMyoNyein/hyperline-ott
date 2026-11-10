@@ -1,0 +1,121 @@
+# SUPERSEDED REFERENCE ONLY. Never install for the current external-CDN architecture.
+# No new CDN or origin is required. See docs/CDN-PLAYBACK.md.
+# Include ONLY in http{} as a NEW file. Never replace existing CDN vhosts.
+# Required includes contain no user-controlled values; see docs/CDN-PLAYBACK.md.
+proxy_cache_path /var/cache/nginx/hyperline-cdn levels=1:2 keys_zone=hl_media:16m max_size=10g inactive=24h use_temp_path=off;
+upstream hl_origin {
+    server cdn.goldendragon2000.com:443;
+    keepalive 16;
+}
+map $hl_signing_secret $hl_secret_valid {
+    default 0;
+    "~^[0-9a-f]{64}$" 1;
+}
+map $http_origin $hl_cors_origin {
+    default "";
+    "https://ott.zentunnel.net" "https://ott.zentunnel.net";
+}
+map $http_origin $hl_bad_origin {
+    default 1;
+    "" 0;
+    "https://ott.zentunnel.net" 0;
+}
+# Canonical ASCII paths only. Reject encoded/dot-segment/ambiguous paths before
+# Nginx normalization can change the scope. Query strings are not supported.
+map $request_uri $hl_canonical {
+    default 0;
+    ~^/hls/[1-9][0-9]*/[1-9][0-9]*/(?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-][A-Za-z0-9_.-]*$ 1;
+}
+map $uri $hl_scope {
+    default "";
+    ~^(?<hl_scope_capture>/hls/[1-9][0-9]*/[1-9][0-9]*/)(?<hl_file_capture>(?:[A-Za-z0-9_-]+/)*[A-Za-z0-9_-][A-Za-z0-9_.-]*)$ $hl_scope_capture;
+}
+map $hl_scope $hl_origin_prefix {
+    default "";
+    include /etc/nginx/hyperline-cdn/assets.map;
+}
+# A cookie carries version, expiration, session UUID, signature. Scope comes
+# from the REQUEST path, never from an unsigned cookie or query parameter.
+map $http_cookie $hl_link {
+    default "";
+    "~(?:^|;\s*)__Secure-hl_playback=v1\.(?<hl_exp>[1-9][0-9]{9})\.(?<hl_session>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.(?<hl_sig>[A-Za-z0-9_-]{21}[AQgw])(?:;|$)" "$hl_sig,$hl_exp";
+}
+# Deliberately excludes Cookie, Authorization, query strings and signing inputs.
+log_format hl_media_safe '$remote_addr [$time_local] $request_method $uri $status $body_bytes_sent';
+server {
+    listen 443 ssl;
+    server_name cdn.zentunnel.net;
+    ssl_certificate /etc/letsencrypt/live/cdn.zentunnel.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/cdn.zentunnel.net/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    # secret.conf: set $hl_signing_secret "<64 lowercase hex characters>";
+    include /etc/nginx/hyperline-cdn/secret.conf;
+    # gate.conf: set $hl_cdn_enabled 0; until the approved verification is complete.
+    include /etc/nginx/hyperline-cdn/gate.conf;
+    access_log /var/log/nginx/hyperline-cdn.access.log hl_media_safe;
+    error_log /var/log/nginx/hyperline-cdn.error.log warn;
+    add_header Access-Control-Allow-Origin $hl_cors_origin always;
+    add_header Access-Control-Allow-Credentials true always;
+    add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
+    add_header Access-Control-Allow-Headers "Range" always;
+    add_header Access-Control-Expose-Headers "Content-Length, Content-Range, Accept-Ranges" always;
+    add_header Vary Origin always;
+    # Shared proxy cache stays efficient, but browsers must reauthorise requests.
+    add_header Cache-Control "private, no-store" always;
+    add_header X-Content-Type-Options nosniff always;
+
+    location /hls/ {
+        if ($hl_cdn_enabled != 1) { return 503; }
+        if ($hl_secret_valid = 0) { return 503; }
+        if ($hl_bad_origin = 1) { return 403; }
+        if ($hl_canonical = 0) { return 400; }
+        if ($hl_origin_prefix = "") { return 404; }
+        # OPTIONS contains no media, cookie or token. Only this exact origin and
+        # known asset namespace get preflight responses.
+        if ($request_method = OPTIONS) { return 204; }
+        if ($request_method !~ ^(GET|HEAD)$) { return 405; }
+        secure_link $hl_link;
+        secure_link_md5 "v1|$secure_link_expires|$hl_scope|$hl_session|$hl_signing_secret";
+        if ($secure_link = "") { return 403; }
+        if ($secure_link = "0") { return 410; }
+
+        # These checks run in rewrite phase, BEFORE proxy cache lookup/content.
+        proxy_cache hl_media;
+        proxy_cache_key "goldendragon:$hl_origin_prefix$hl_file_capture";
+        proxy_cache_lock on;
+        proxy_cache_valid 200 10m;
+        # Respect upstream private/no-store/Set-Cookie/Vary; never ignore its ACL.
+        proxy_http_version 1.1;
+        proxy_pass_request_headers off;
+        proxy_set_header Range $http_range;
+        proxy_set_header If-Range $http_if_range;
+        proxy_force_ranges on;
+        proxy_set_header Connection "";
+        proxy_set_header Host cdn.goldendragon2000.com;
+        proxy_set_header Cookie "";
+        proxy_set_header Authorization "";
+        proxy_set_header Origin "";
+        proxy_set_header Referer "";
+        # Approved service-to-origin access controls only, never viewer credentials.
+        include /etc/nginx/hyperline-cdn/origin-access.conf;
+        proxy_ssl_server_name on;
+        proxy_ssl_name cdn.goldendragon2000.com;
+        proxy_ssl_verify on;
+        proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+        proxy_ssl_verify_depth 3;
+        proxy_hide_header Set-Cookie;
+        proxy_hide_header Access-Control-Allow-Origin;
+        proxy_hide_header Access-Control-Allow-Credentials;
+        proxy_hide_header Cache-Control;
+        proxy_hide_header Expires;
+        proxy_hide_header Location;
+        proxy_hide_header X-Accel-Redirect;
+        proxy_ignore_headers X-Accel-Redirect;
+        proxy_intercept_errors on;
+        error_page 301 302 303 307 308 =502 @hl_origin_redirect;
+        # Only allowlisted prefixes on a fixed upstream; never a URL parameter.
+        proxy_pass https://hl_origin$hl_origin_prefix$hl_file_capture;
+    }
+    location @hl_origin_redirect { return 502; }
+    location / { return 404; }
+}

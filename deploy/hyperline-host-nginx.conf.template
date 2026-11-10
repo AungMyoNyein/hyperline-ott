@@ -1,0 +1,57 @@
+# SUPERSEDED SKETCH: installation now uses deploy/https/sites/ and its separate SAN lineage.
+# See docs/HYPERLINE-HTTPS-REVIEW.md; do not install this aggregate sketch.
+# REVIEW ONLY. Add as a NEW host Nginx file after explicit production approval.
+# Keep existing zentunnel.net/vpn transports unchanged. No CDN/origin vhost here.
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ott.zentunnel.net cms.zentunnel.net api.zentunnel.net;
+    # Provision certificates with the existing operator workflow before HTTPS use.
+    return 301 https://$host$request_uri;
+}
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ott.zentunnel.net;
+    ssl_certificate /etc/letsencrypt/live/ott.zentunnel.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ott.zentunnel.net/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    location / {
+        proxy_pass http://127.0.0.1:18080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name cms.zentunnel.net;
+    ssl_certificate /etc/letsencrypt/live/cms.zentunnel.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/cms.zentunnel.net/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    location / {
+        proxy_pass http://127.0.0.1:18080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name api.zentunnel.net;
+    ssl_certificate /etc/letsencrypt/live/api.zentunnel.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.zentunnel.net/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    client_max_body_size 20m;
+    location / {
+        proxy_pass http://127.0.0.1:18080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

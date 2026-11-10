@@ -1,0 +1,30 @@
+.git
+.gitignore
+.keep
+.env
+.env.*
+!.env.example
+vendor
+node_modules
+public/build
+public/hot
+public/storage
+storage/logs
+storage/framework/cache/data
+storage/framework/sessions
+storage/framework/views
+bootstrap/cache/*.php
+*.log
+.phpunit.result.cache
+.phpunit.cache
+.idea
+.vscode
+.DS_Store
+
+# tests/ and phpunit.xml stay in the context on purpose: the image's `dev` build
+# stage needs them. The `production` stage removes them again.
+
+# Local databases and user uploads must never enter an application image.
+database/*.sqlite
+database/*.sqlite-*
+storage/app

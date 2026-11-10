@@ -1,0 +1,15 @@
+# HyperLine application deployment plan — not executed
+
+The current authoritative command sequence is [ACTIVATION-SEQUENCE.md](ACTIVATION-SEQUENCE.md). It supersedes the earlier generic build/recreate/migration commands. Review [RUNTIME-RELEASE-REVIEW.md](RUNTIME-RELEASE-REVIEW.md) for exact image references, test results and remaining live failures. Host-only phase commands and scoped rollback are in [../deploy/https/OPERATIONS.md](../deploy/https/OPERATIONS.md).
+
+Prepared release: `runtime-20261109T003915Z`. API, Web and CMS images are built; worker/scheduler share the API image. All existing containers remain unchanged. Recreation of only api/web/cms/worker/scheduler and a graceful gateway reload to refresh static upstream DNS require explicit approval. No migration is required by this runtime correction. Do not rebuild/recreate database, Redis or gateway, and do not use raw legacy API images for rollback: the tested guarded fallback intentionally disables playback.
+
+Preserve project `hyperline`, existing APP_KEY/passwords, named data/storage/public volumes and the gateway binding `127.0.0.1:18080`. Use existing host Nginx with separate explicit-name vhosts and a new HyperLine-only SAN certificate. Preserve existing Zentunnel vhosts/certificates, VPN API/provisioning, WireGuard, Xray/VLESS, Shadowsocks, PHP-FPM, Docker and host databases/cache. Approval for HyperLine does not authorize Zentunnel shutdown or VPN changes.
+
+Production prerequisites: protected configuration/image/storage/DB backups, isolated restore verification, image ID verification, API error/CORS/health checks, worker/scheduler probes, PostgreSQL/Redis connectivity, staged Nginx validation, external ACME reachability, approved certificate contact and separate certificate/host-change approval. Single-replica application rollout has a brief interruption; no zero-downtime claim is made. Require real VPN client traffic/forwarding/DNS checks before/during/after reloads.
+
+The existing VOD origin and `cdn.goldendragon2000.com` remain unchanged. No alternate CDN or hostname is required. Release configuration explicitly requires signing and keeps CDN verification false. Unknown authorization protocol/credentials, cross-site browser CORS and full protected nested HLS/renewal verification remain playback blockers. Never enable mocks, wildcard credentialed CORS or unsigned production access to clear readiness checks.
+
+Rollback changes only approved application images/new HyperLine host artifacts, never data or unrelated operator files. Guarded API fallback returns 503 for playback; captured worker/scheduler probes restore the known unhealthy baseline. No `compose down`, volume deletion, database reset/restore, Docker restart, VPN restart or start of inactive wg-quick is part of normal recovery. See the exact approved-scope commands and checks in ACTIVATION-SEQUENCE.md.
+
+**NO-GO for production activation until explicitly approved and the new running images pass the pre-TLS checks.** Application pages/API HTTPS can be approved with playback disabled; fully functional protected production playback remains independently blocked by CDN verification.

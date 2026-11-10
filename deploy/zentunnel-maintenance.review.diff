@@ -1,0 +1,11 @@
+Only the existing HTTPS zentunnel.net server is changed by the candidate:
+- location /: static try_files -> return 503 with Retry-After.
+- add exact /api/admin/v1 and prefix /api/admin/v1/ -> return 503.
+Everything else is byte-preserved: /api/ proxy to 127.0.0.1:8000, /sanctum/,
+ACME challenge, TLS settings, HTTP redirect, listeners, and all other vhosts.
+The API systemd unit is NOT stopped: it serves VPN device authentication,
+activation, subscription state, provisioning, status and revocation.
+No VPN WebSocket/gRPC route exists in this observed vhost. Any config drift,
+including a newly added transport route, causes the script to refuse execution.
+Full Zentunnel API shutdown is NOT safely available under the preservation scope.
+This is a partial web/admin maintenance plan, requiring explicit approval.

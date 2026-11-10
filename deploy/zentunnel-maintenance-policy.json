@@ -1,0 +1,27 @@
+{
+  "host_ip": "157.85.104.49",
+  "source": "/etc/nginx/sites-available/zentunnel",
+  "enabled_link": "/etc/nginx/sites-enabled/zentunnel",
+  "original_sha256": "f4c3fd2256852e7438019b790c4993264a703b315e637264cb0ae983fb82ebe4",
+  "candidate_sha256": "402ad101f4aa8d1d12782f999b306853169a6abcc629780d099ede77e98031ca",
+  "protected_units": [
+    "nginx.service",
+    "docker.service",
+    "containerd.service",
+    "php8.3-fpm.service",
+    "vpn-api.service",
+    "vpn-control-plane.service",
+    "vpn-node-agent.service",
+    "xray-vless.service",
+    "shadowsocks-libev.service",
+    "redis-server.service",
+    "postgresql@16-main.service"
+  ],
+  "protected_passive_units": [
+    "wg-quick@wg0.service"
+  ],
+  "stop_units": [],
+  "stop_containers": [],
+  "scope": "Website and /api/admin/v1 only; /api/v1 VPN control/provisioning remains available",
+  "state_dir": "/var/lib/hyperline-zentunnel-maintenance"
+}

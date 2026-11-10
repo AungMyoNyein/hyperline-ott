@@ -26,3 +26,12 @@ apps/*/.env*
 # OS/editor
 .DS_Store
 *.swp
+
+# Local agent state and generated deployment evidence
+.agents/
+.codex/
+.aws/
+__pycache__/
+*.py[cod]
+deploy/releases/
+deploy/reports/

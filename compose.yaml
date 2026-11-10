@@ -6,16 +6,31 @@ services:
     volumes:
       - ./infra/nginx/conf.d:/etc/nginx/conf.d:ro
       - api_public:/var/www/html/public:ro
-    depends_on: [web,cms,api]
+    depends_on:
+      web: {condition: service_healthy}
+      cms: {condition: service_healthy}
+      api: {condition: service_healthy}
     restart: unless-stopped
     networks: [frontend]
   web:
     build: {context: ./apps/web, args: {NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL}"}}
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
     networks: [frontend]
   cms:
     build: {context: ./apps/cms, args: {NEXT_PUBLIC_API_URL: "${NEXT_PUBLIC_API_URL}"}}
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
     networks: [frontend]
   api:
     build: ./services/api
@@ -29,23 +44,45 @@ services:
   worker:
     build: ./services/api
     command: php artisan queue:work redis --sleep=3 --tries=3 --timeout=90
+    stop_grace_period: 120s
+    healthcheck:
+      test: ["CMD", "php", "docker/healthcheck.php", "worker"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
     env_file: .env
     volumes: [api_storage:/var/www/html/storage]
     depends_on:
+      api: {condition: service_healthy}
       postgres: {condition: service_healthy}
       redis: {condition: service_healthy}
     restart: unless-stopped
     networks: [backend]
   scheduler:
     build: ./services/api
-    command: sh -c 'while true; do php artisan schedule:run --no-interaction; sleep 60; done'
+    command: sh docker/run-scheduler.sh
+    stop_grace_period: 75s
+    healthcheck:
+      test: ["CMD", "php", "docker/healthcheck.php", "scheduler"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 3
     env_file: .env
     volumes: [api_storage:/var/www/html/storage]
     depends_on:
+      api: {condition: service_healthy}
       postgres: {condition: service_healthy}
       redis: {condition: service_healthy}
     restart: unless-stopped
     networks: [backend]
+  api-test:
+    profiles: [test]
+    build: {context: ./services/api, target: dev}
+    command: php artisan test
+    networks: [backend]
+    restart: "no"
   postgres:
     image: postgres:16-alpine
     environment: {POSTGRES_DB: "${POSTGRES_DB}",POSTGRES_USER: "${POSTGRES_USER}",POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"}
@@ -58,11 +95,11 @@ services:
     networks: [backend]
   redis:
     image: redis:7-alpine
-    command: ["sh","-c","exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD""]
+    command: ["sh","-c","exec redis-server --appendonly yes --requirepass \"$$REDIS_PASSWORD\""]
     environment: {REDIS_PASSWORD: "${REDIS_PASSWORD}"}
     volumes: [redisdata:/data]
     healthcheck:
-      test: ["CMD-SHELL","redis-cli -a "$$REDIS_PASSWORD" ping | grep -q PONG"]
+      test: ["CMD-SHELL","redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
       interval: 10s
       retries: 10
     restart: unless-stopped

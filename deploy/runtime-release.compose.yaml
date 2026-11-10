@@ -1,0 +1,20 @@
+# BUILD/REVIEW ONLY. No deployment is triggered by this override.
+# API, worker and scheduler use the SAME tested runtime image.
+services:
+  api:
+    environment:
+      CORS_ALLOWED_ORIGINS: https://ott.zentunnel.net,https://cms.zentunnel.net
+      CORS_SUPPORTS_CREDENTIALS: "true"
+      OTT_SIGNED_URLS: "true"
+      OTT_EXISTING_CDN_VERIFIED: "false"
+      OTT_NGINX_CDN_VERIFIED: "false"
+      OTT_PLAYBACK_SIGNER: App\Support\Playback\ExistingCdnPlaybackSigner
+    image: hyperline-api:${HYPERLINE_RELEASE:?Set the reviewed release ID}
+  worker:
+    image: hyperline-api:${HYPERLINE_RELEASE:?Set the reviewed release ID}
+  scheduler:
+    image: hyperline-api:${HYPERLINE_RELEASE:?Set the reviewed release ID}
+  web:
+    image: hyperline-web:${HYPERLINE_RELEASE:?Set the reviewed release ID}
+  cms:
+    image: hyperline-cms:${HYPERLINE_RELEASE:?Set the reviewed release ID}
