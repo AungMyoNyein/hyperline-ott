@@ -35,3 +35,19 @@ __pycache__/
 *.py[cod]
 deploy/releases/
 deploy/reports/
+
+# Private key material, local database snapshots and generated reports
+.ssh/
+*.pem
+*.key
+*.ppk
+*.p12
+*.pfx
+*.dump
+*.backup
+*.sql.gz
+*.sqlite
+*.sqlite3
+*.log
+playwright-report/
+test-results/

@@ -13,6 +13,11 @@
     "react-dom": "^19.0.0",
     "hls.js": "^1.6.0"
   },
+  "overrides": {
+    "next": {
+      "postcss": "8.5.23"
+    }
+  },
   "devDependencies": {
     "typescript": "^5.0.0",
     "@types/node": "^22.0.0",
