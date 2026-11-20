@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type HlsType from "hls.js";
 import type { MediaPlayerClass } from "dashjs";
-import { api, errorText, Series } from "../../lib/api";
+import { api, ApiError, errorText, Series } from "../../lib/api";
 import { useWatchProgress } from "./use-movie-progress";
 import { useSession } from "../session";
 type Playback = {
@@ -55,6 +55,7 @@ export default function Player({
   const { token } = useSession();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [controlNotice, setControlNotice] = useState("");
   const [retry, setRetry] = useState(0);
   const [youtubeSrc, setYoutubeSrc] = useState<string | null>(null);
   const [levels, setLevels] = useState<{ height: number; bitrate: number }[]>(
@@ -112,6 +113,7 @@ export default function Player({
     let restorePosition: (() => void) | undefined;
     setLoading(true);
     setError("");
+    setControlNotice("");
     setLevels([]);
     setQuality(-1);
     setYoutubeSrc(null);
@@ -312,7 +314,11 @@ export default function Player({
       } catch (e) {
         if (!disposed && !controller.signal.aborted) {
           ready();
-          setError(errorText(e));
+          setError(
+            e instanceof ApiError && e.status === 503
+              ? "This title is temporarily unavailable. Please try again later or choose another story."
+              : errorText(e),
+          );
         }
       }
     })();
@@ -336,15 +342,17 @@ export default function Player({
     };
   }, [movieId, episodeId, token, retry, valid, isMovie]);
   async function fullscreen() {
+    setControlNotice("");
     try {
       const video = videoRef.current as
-        (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+        | (HTMLVideoElement & { webkitEnterFullscreen?: () => void })
+        | null;
       if (containerRef.current?.requestFullscreen)
         await containerRef.current.requestFullscreen();
       else if (video?.webkitEnterFullscreen) video.webkitEnterFullscreen();
-      else setError("Use the video controls to enter full screen.");
+      else setControlNotice("Use the video controls to enter full screen.");
     } catch {
-      setError("Full screen is unavailable. Use the video controls.");
+      setControlNotice("Full screen is unavailable. Use the video controls.");
     }
   }
   if (!valid)
@@ -401,13 +409,20 @@ export default function Player({
         )}
         <video
           ref={videoRef}
-          controls
+          controls={!error}
           playsInline
           preload="metadata"
           crossOrigin="anonymous"
           aria-label={isEpisode ? "Episode player" : "Movie player"}
-          style={youtubeSrc ? { display: "none" } : undefined}
+          style={youtubeSrc || error ? { display: "none" } : undefined}
         />
+        {error && (
+          <div className="player-status player-unavailable">
+            <span aria-hidden="true">◇</span>
+            <h2>Playback is unavailable</h2>
+            <p>Please try again, or explore another title.</p>
+          </div>
+        )}
         {loading && !youtubeSrc && (
           <p className="player-status" role="status">
             Loading stream…
@@ -415,7 +430,13 @@ export default function Player({
         )}
       </div>
       <div className="player-tools">
-        <button onClick={fullscreen}>Full screen</button>
+        <button
+          className="secondary"
+          disabled={!!error || loading}
+          onClick={fullscreen}
+        >
+          Full screen
+        </button>
         {levels.length > 0 && (
           <label>
             Quality
@@ -443,6 +464,7 @@ export default function Player({
           Reload stream
         </button>
       </div>
+      {controlNotice && <p role="status">{controlNotice}</p>}
       {series && isEpisode && (
         <nav className="ep-nav" aria-label="Episode navigation">
           <Link
@@ -472,9 +494,21 @@ export default function Player({
         </nav>
       )}
       {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
+        <section className="playback-error">
+          <h2>Let’s get you back to your story.</h2>
+          <p className="error" role="alert">
+            {error}
+          </p>
+          <Link
+            href={
+              seriesSlug
+                ? `/series/${encodeURIComponent(seriesSlug)}`
+                : "/movies"
+            }
+          >
+            Explore other titles ↗
+          </Link>
+        </section>
       )}
     </>
   );

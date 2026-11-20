@@ -1,0 +1,40 @@
+{
+  "result": "PASS",
+  "checked_at": "2026-11-19T17:58:45.974032+00:00",
+  "checks": [
+    "quiesced backup checksums verified",
+    "new isolated PG16: no external network, ports or existing volumes",
+    "fresh isolated restoration completed",
+    "all 13 migrations applied only inside disposable restored PG16",
+    "original immutable release reproduces undefined-constant failure",
+    "minimal mounted correction returns exit 0 and valid JSON; zero ownership violations",
+    "text audit remains compatible",
+    "every restored original table row fingerprint preserved"
+  ],
+  "ownership_report": {
+    "migrations_applied": 13,
+    "violations": {
+      "video_sources": {
+        "ownerless": 0,
+        "dual_owner": 0
+      },
+      "playback_sessions": {
+        "ownerless": 0,
+        "dual_owner": 0
+      },
+      "watch_progress": {
+        "ownerless": 0,
+        "dual_owner": 0
+      },
+      "series_episodes": {
+        "missing_season": 0,
+        "season_series_mismatch": 0
+      }
+    },
+    "ok": true
+  },
+  "live_database_contacted": false,
+  "uat_containers_changed": false,
+  "existing_volumes_mounted": false,
+  "fix_sha256": "8bf7967745acae4198c1fd94b4510440f037a7672dcf603d4ff6c4fa7d005164"
+}

@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import { Genre, Source } from "../../lib/api";
 import { Draft, newSource } from "./movie-draft";
+import ArtworkPreview from "./artwork-preview";
 function FieldError({
   name,
   errors,
@@ -91,6 +92,10 @@ export default function MovieEditor({
               </label>
             ))}
           </div>
+          <ArtworkPreview
+            poster={draft.poster_url}
+            backdrop={draft.backdrop_url}
+          />
           <label htmlFor="movie-synopsis">Synopsis</label>
           <textarea
             id="movie-synopsis"

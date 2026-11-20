@@ -6,6 +6,14 @@ import {
 const web = "http://127.0.0.1:18082",
   cms = "http://127.0.0.1:18083",
   api = "http://127.0.0.1:18081/api/v1";
+async function openViewerMenu(page: Page) {
+  const menu = page.getByRole("button", { name: "Menu", exact: true });
+  if (
+    (await menu.isVisible()) &&
+    (await menu.getAttribute("aria-expanded")) === "false"
+  )
+    await menu.click();
+}
 async function login(page: Page, admin = false) {
   await page.goto(admin ? cms : `${web}/login`);
   await page
@@ -17,11 +25,15 @@ async function login(page: Page, admin = false) {
   );
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   const data = (await (await response).json()).data;
-  if (admin)
+  if (admin) {
+    await page
+      .getByRole("navigation", { name: "Studio navigation" })
+      .getByRole("button", { name: "Movies", exact: true })
+      .click();
     await expect(
       page.getByRole("heading", { name: "Create movie" }),
     ).toBeVisible();
-  else await page.waitForURL(web + "/");
+  } else await page.waitForURL(web + "/");
   return data.token as string;
 }
 test("My List adds, lists, removes and expires a revoked in-memory session", async ({
@@ -29,12 +41,14 @@ test("My List adds, lists, removes and expires a revoked in-memory session", asy
   request,
 }) => {
   const token = await login(page);
-  await page.getByRole("link", { name: "Movies & search" }).click();
+  await page.getByRole("link", { name: "Movies", exact: true }).click();
+  await page.waitForURL(web + "/movies");
   await page.locator(".card").filter({ hasText: "Local test pattern" }).click();
   await page.getByRole("button", { name: "Add to watchlist" }).click();
   await expect(page.getByRole("status")).toContainText("Added");
   await page.getByRole("link", { name: "My List", exact: true }).focus();
   await page.keyboard.press("Enter");
+  await page.waitForURL(web + "/my-list");
   await expect(
     page.getByRole("heading", { name: "Local test pattern" }),
   ).toBeVisible();
@@ -63,7 +77,9 @@ test("My List adds, lists, removes and expires a revoked in-memory session", asy
       })
     ).status(),
   ).toBe(200);
+  await openViewerMenu(page);
   await page.getByRole("link", { name: "Home", exact: true }).click();
+  await openViewerMenu(page);
   await page.getByRole("link", { name: "My List", exact: true }).click();
   await expect(
     page.getByRole("link", { name: "Sign in to view My List" }),
@@ -94,9 +110,12 @@ test("movie progress resumes, throttles event bursts, saves on pause, and comple
       completed: false,
     },
   });
+  await openViewerMenu(page);
   await page.getByRole("link", { name: "Home", exact: true }).click();
   // A real client navigation remounts home after the fixture progress write.
-  await page.getByRole("link", { name: "Movies & search" }).click();
+  await page.getByRole("link", { name: "Movies", exact: true }).click();
+  await page.waitForURL(web + "/movies");
+  await openViewerMenu(page);
   await page.getByRole("link", { name: "Home", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Continue watching", exact: true }),
@@ -174,9 +193,10 @@ test("movie progress resumes, throttles event bursts, saves on pause, and comple
       return j.data[0].completed;
     })
     .toBe(true);
+  await openViewerMenu(page);
   await page.getByRole("link", { name: "Home", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Recently added" }),
+    page.getByRole("heading", { name: "Latest movies" }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Continue watching", exact: true }),
@@ -208,7 +228,9 @@ test("CMS protects unsaved edits, applies API filters, exposes audit history and
   await page.getByLabel("Search movies", { exact: true }).fill("Local test");
   await page.getByLabel("Publication", { exact: true }).selectOption("1");
   await page.getByLabel("Genre", { exact: true }).selectOption("test-patterns");
-  await page.getByRole("combobox", { name: "Featured", exact: true }).selectOption("1");
+  await page
+    .getByRole("combobox", { name: "Featured", exact: true })
+    .selectOption("1");
   await page.getByRole("button", { name: "Apply filters" }).click();
   await expect(
     page.locator(".library article").filter({ hasText: "Local test pattern" }),
@@ -216,6 +238,10 @@ test("CMS protects unsaved edits, applies API filters, exposes audit history and
   await expect(
     page.locator(".library article").filter({ hasText: "Hidden test draft" }),
   ).toHaveCount(0);
+  await page
+    .getByRole("navigation", { name: "Studio navigation" })
+    .getByRole("button", { name: "Audit & activity", exact: true })
+    .click();
   await page.getByRole("button", { name: "View audit log" }).click();
   await page.getByLabel("Action", { exact: true }).fill("admin.login");
   await page.getByRole("button", { name: "Filter audit log" }).click();
@@ -232,6 +258,11 @@ test("CMS protects unsaved edits, applies API filters, exposes audit history and
     path: "/tmp/hyperline-phase1-cms-mobile.png",
     fullPage: true,
   });
+  await page.getByRole("button", { name: "Menu", exact: true }).click();
+  await page
+    .getByRole("navigation", { name: "Studio navigation" })
+    .getByRole("button", { name: "Movies", exact: true })
+    .click();
   await page.getByRole("button", { name: "Apply filters" }).focus();
   await page.keyboard.press("Enter");
   expect(

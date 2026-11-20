@@ -57,6 +57,7 @@ export type Series = {
   title: string;
   slug: string;
   synopsis: string | null;
+  genres?: Genre[];
   category: string | null;
   language: string | null;
   release_year: number | null;
