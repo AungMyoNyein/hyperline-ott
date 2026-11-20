@@ -56,6 +56,7 @@ export default function Player({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [controlNotice, setControlNotice] = useState("");
+  const [progressNotice, setProgressNotice] = useState("");
   const [retry, setRetry] = useState(0);
   const [youtubeSrc, setYoutubeSrc] = useState<string | null>(null);
   const [levels, setLevels] = useState<{ height: number; bitrate: number }[]>(
@@ -89,7 +90,7 @@ export default function Player({
         ? { kind: "episode", id: episodeId || "" }
         : null,
     token,
-    setError,
+    setProgressNotice,
   );
   useEffect(() => {
     if (!seriesSlug) return;
@@ -114,6 +115,7 @@ export default function Player({
     setLoading(true);
     setError("");
     setControlNotice("");
+    setProgressNotice("");
     setLevels([]);
     setQuality(-1);
     setYoutubeSrc(null);
@@ -216,7 +218,14 @@ export default function Player({
             } catch (e) {
               if (!disposed && !controller.signal.aborted) {
                 video?.pause();
-                hls?.stopLoad();
+                hls?.destroy();
+                hls = null;
+                hlsRef.current = null;
+                dash?.reset();
+                dash = null;
+                dashRef.current = null;
+                video?.removeAttribute("src");
+                video?.load();
                 setError(
                   "Playback authorization could not be renewed. " +
                     errorText(e),
@@ -465,6 +474,7 @@ export default function Player({
         </button>
       </div>
       {controlNotice && <p role="status">{controlNotice}</p>}
+      {progressNotice && <p role="status">{progressNotice}</p>}
       {series && isEpisode && (
         <nav className="ep-nav" aria-label="Episode navigation">
           <Link

@@ -201,3 +201,60 @@ test("browser blocks missing CDN CORS and player reports an actionable error", a
     unlinkSync("/tmp/hyperline-test-media/block-cors");
   }
 });
+
+// Progress availability must not change an already authorized media session.
+for (const failure of [503, 403, "network"] as const) {
+  test(`progress ${failure} read and save failures keep authorized video and controls available`, async ({
+    page,
+  }) => {
+    await signIn(page, web, "viewer@hyperline.test");
+    await page.route("**/api/v1/watch-progress**", (route) => {
+      const headers = {
+        "access-control-allow-origin": web,
+        "access-control-allow-headers": "authorization,content-type",
+        "access-control-allow-methods": "GET,POST,OPTIONS",
+      };
+      if (route.request().method() === "OPTIONS")
+        return route.fulfill({ status: 204, headers });
+      return failure === "network"
+        ? route.abort("failed")
+        : route.fulfill({
+            status: failure,
+            headers,
+            json: { message: "Isolated progress service unavailable." },
+          });
+    });
+    await page.getByRole("link", { name: "Movies", exact: true }).click();
+    await page.waitForURL(web + "/movies");
+    await page
+      .locator(".card")
+      .filter({ hasText: "Local test pattern" })
+      .click();
+    await page.getByRole("link", { name: /^(Watch now|Resume)$/ }).click();
+    const video = page.locator("video");
+    await expect(
+      page
+        .getByRole("status")
+        .filter({ hasText: "Resume position could not be loaded" }),
+    ).toBeVisible();
+    await expect
+      .poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState), {
+        timeout: 30000,
+      })
+      .toBeGreaterThanOrEqual(2);
+    await video.evaluate((v: HTMLVideoElement) => v.play());
+    await expect
+      .poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime))
+      .toBeGreaterThan(1.25);
+    await video.evaluate((v: HTMLVideoElement) => v.pause());
+    await expect(page.getByRole("status")).toContainText(
+      "Watch progress could not be saved",
+    );
+    await expect(video).toBeVisible();
+    await expect(video).toHaveJSProperty("controls", true);
+    await expect(page.locator(".player-unavailable")).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Full screen", exact: true }),
+    ).toBeEnabled();
+  });
+}

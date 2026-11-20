@@ -7,6 +7,14 @@ test("direct signed-URL transport refreshes through Laravel and preserves playba
   page,
 }) => {
   const web = "http://127.0.0.1:18082";
+  // Renewal timing must not depend on progress saved by preceding specs: this
+  // eight-second fixture can otherwise finish before its first renewal.
+  await page.route("**/api/v1/watch-progress?movie_id=*", (route) =>
+    route.fulfill({
+      headers: { "access-control-allow-origin": web },
+      json: { data: [] },
+    }),
+  );
   await page.goto(`${web}/login`);
   await page.getByLabel("Email", { exact: true }).fill("viewer@hyperline.test");
   await page.getByLabel("Password", { exact: true }).fill("TestPassword!2026");
