@@ -3,40 +3,18 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type HlsType from "hls.js";
 import type { MediaPlayerClass } from "dashjs";
-import { api, errorText, Series } from "../../lib/api";
+import { api, ApiError, errorText, Series } from "../../lib/api";
 import { useWatchProgress } from "./use-movie-progress";
 import { useSession } from "../session";
+import YouTube from "./youtube-player";
 type Playback = {
   url: string;
   session_id: string;
   expires_at: string;
-  source: { kind: string } | null;
+  source: { kind: string; video_id?: string } | null;
   credentials_required?: boolean;
   renew_after_seconds?: number | null;
 };
-/**
- * Converts an administrator-entered YouTube link (watch/short/embed/youtu.be)
- * into the privacy-moderate embed URL. Falls back to the raw URL, which the
- * iframe will refuse visibly rather than silently playing the wrong video.
- */
-function toYouTubeEmbed(raw: string): string {
-  try {
-    const u = new URL(raw);
-    const host = u.hostname.replace(/^www\./, "");
-    let id: string | null = null;
-    if (host === "youtu.be") id = u.pathname.slice(1).split("/")[0] || null;
-    else if (host.endsWith("youtube.com")) {
-      const m = u.pathname.match(/^\/(embed|shorts|live)\/([^/?#]+)/);
-      if (m) id = m[2];
-      else if (u.pathname.startsWith("/watch")) id = u.searchParams.get("v");
-    }
-    if (id && /^[A-Za-z0-9_-]{11}$/.test(id))
-      return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`;
-  } catch {
-    /* fall through */
-  }
-  return raw;
-}
 export default function Player({
   movieId,
   episodeId,
@@ -55,8 +33,11 @@ export default function Player({
   const { token } = useSession();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [controlNotice, setControlNotice] = useState("");
+  const [progressNotice, setProgressNotice] = useState("");
   const [retry, setRetry] = useState(0);
-  const [youtubeSrc, setYoutubeSrc] = useState<string | null>(null);
+  const [youtubeId, setYoutubeId] = useState<string | null>(null);
+  const [nativeReady, setNativeReady] = useState(false);
   const [levels, setLevels] = useState<{ height: number; bitrate: number }[]>(
     [],
   );
@@ -82,13 +63,15 @@ export default function Player({
   const vertical = series?.category === "vertical";
   useWatchProgress(
     videoRef,
-    isMovie
-      ? { kind: "movie", id: movieId }
-      : isEpisode
-        ? { kind: "episode", id: episodeId || "" }
-        : null,
+    !nativeReady
+      ? null
+      : isMovie
+        ? { kind: "movie", id: movieId }
+        : isEpisode
+          ? { kind: "episode", id: episodeId || "" }
+          : null,
     token,
-    setError,
+    setProgressNotice,
   );
   useEffect(() => {
     if (!seriesSlug) return;
@@ -112,9 +95,12 @@ export default function Player({
     let restorePosition: (() => void) | undefined;
     setLoading(true);
     setError("");
+    setControlNotice("");
+    setProgressNotice("");
     setLevels([]);
     setQuality(-1);
-    setYoutubeSrc(null);
+    setYoutubeId(null);
+    setNativeReady(false);
     const timeout = window.setTimeout(() => {
       if (!disposed) {
         setLoading(false);
@@ -159,12 +145,14 @@ export default function Player({
         )
           throw new Error("The playback URL is not secure.");
         if (playback.source?.kind === "youtube") {
-          // Public embed: no signed renewal (the API returns renew_after=null),
-          // no video element, and therefore no position reporting.
+          const id = playback.source.video_id;
+          if (!id || !/^[A-Za-z0-9_-]{11}$/.test(id))
+            throw new Error("This YouTube video link is invalid.");
           ready();
-          setYoutubeSrc(toYouTubeEmbed(playback.url));
+          setYoutubeId(id);
           return;
         }
+        setNativeReady(true);
         video.crossOrigin = playback.credentials_required
           ? "use-credentials"
           : "anonymous";
@@ -214,7 +202,14 @@ export default function Player({
             } catch (e) {
               if (!disposed && !controller.signal.aborted) {
                 video?.pause();
-                hls?.stopLoad();
+                hls?.destroy();
+                hls = null;
+                hlsRef.current = null;
+                dash?.reset();
+                dash = null;
+                dashRef.current = null;
+                video?.removeAttribute("src");
+                video?.load();
                 setError(
                   "Playback authorization could not be renewed. " +
                     errorText(e),
@@ -312,7 +307,11 @@ export default function Player({
       } catch (e) {
         if (!disposed && !controller.signal.aborted) {
           ready();
-          setError(errorText(e));
+          setError(
+            e instanceof ApiError && e.status === 503
+              ? "This title is temporarily unavailable. Please try again later or choose another story."
+              : errorText(e),
+          );
         }
       }
     })();
@@ -336,15 +335,17 @@ export default function Player({
     };
   }, [movieId, episodeId, token, retry, valid, isMovie]);
   async function fullscreen() {
+    setControlNotice("");
     try {
       const video = videoRef.current as
-        (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+        | (HTMLVideoElement & { webkitEnterFullscreen?: () => void })
+        | null;
       if (containerRef.current?.requestFullscreen)
         await containerRef.current.requestFullscreen();
       else if (video?.webkitEnterFullscreen) video.webkitEnterFullscreen();
-      else setError("Use the video controls to enter full screen.");
+      else setControlNotice("Use the video controls to enter full screen.");
     } catch {
-      setError("Full screen is unavailable. Use the video controls.");
+      setControlNotice("Full screen is unavailable. Use the video controls.");
     }
   }
   if (!valid)
@@ -382,40 +383,53 @@ export default function Player({
         </p>
       )}
       <div
-        className={`player${vertical ? " player-vertical" : ""}`}
+        className={`player${vertical ? " player-vertical" : ""}${youtubeId ? " player-youtube" : ""}`}
         ref={containerRef}
       >
-        {youtubeSrc && (
-          <iframe
-            src={youtubeSrc}
-            title="YouTube player"
-            allow="accelerometer; autoplay; encrypted-media; picture-in-picture; web-share"
-            allowFullScreen
-            style={{
-              width: "100%",
-              aspectRatio: "16 / 9",
-              border: 0,
-              display: "block",
-            }}
+        {youtubeId && !error && (
+          <YouTube
+            key={`${isMovie ? "movie" : "episode"}-${isMovie ? movieId : episodeId}`}
+            videoId={youtubeId}
+            owner={
+              isMovie
+                ? { kind: "movie", id: movieId }
+                : { kind: "episode", id: episodeId || "" }
+            }
+            token={token}
+            onError={setError}
+            onNotice={setProgressNotice}
           />
         )}
         <video
           ref={videoRef}
-          controls
+          controls={!error}
           playsInline
           preload="metadata"
           crossOrigin="anonymous"
           aria-label={isEpisode ? "Episode player" : "Movie player"}
-          style={youtubeSrc ? { display: "none" } : undefined}
+          style={youtubeId || error ? { display: "none" } : undefined}
         />
-        {loading && !youtubeSrc && (
+        {error && (
+          <div className="player-status player-unavailable">
+            <span aria-hidden="true">◇</span>
+            <h2>Playback is unavailable</h2>
+            <p>Please try again, or explore another title.</p>
+          </div>
+        )}
+        {loading && !youtubeId && (
           <p className="player-status" role="status">
             Loading stream…
           </p>
         )}
       </div>
       <div className="player-tools">
-        <button onClick={fullscreen}>Full screen</button>
+        <button
+          className="secondary"
+          disabled={!!error || loading}
+          onClick={fullscreen}
+        >
+          Full screen
+        </button>
         {levels.length > 0 && (
           <label>
             Quality
@@ -443,6 +457,8 @@ export default function Player({
           Reload stream
         </button>
       </div>
+      {controlNotice && <p role="status">{controlNotice}</p>}
+      {progressNotice && <p role="status">{progressNotice}</p>}
       {series && isEpisode && (
         <nav className="ep-nav" aria-label="Episode navigation">
           <Link
@@ -472,9 +488,21 @@ export default function Player({
         </nav>
       )}
       {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
+        <section className="playback-error">
+          <h2>Let’s get you back to your story.</h2>
+          <p className="error" role="alert">
+            {error}
+          </p>
+          <Link
+            href={
+              seriesSlug
+                ? `/series/${encodeURIComponent(seriesSlug)}`
+                : "/movies"
+            }
+          >
+            Explore other titles ↗
+          </Link>
+        </section>
       )}
     </>
   );

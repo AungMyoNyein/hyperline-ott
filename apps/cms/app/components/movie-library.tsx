@@ -111,20 +111,50 @@ export default function MovieLibrary({
       </form>
       {loading && <p role="status">Loading library…</p>}
       {!loading && !movies.length && <p>No movies on this page.</p>}
-      <div className="library">
+      <div className="library" role="table" aria-label="Movie library">
+        <div className="library-table-head" role="row">
+          <span role="columnheader">Artwork</span>
+          <span role="columnheader">Title</span>
+          <span role="columnheader">Status</span>
+          <span role="columnheader">Sources</span>
+          <span role="columnheader">Actions</span>
+        </div>
         {movies.map((m) => (
-          <article key={m.id}>
-            {m.poster_url && <img src={m.poster_url} alt="" />}
-            <div>
+          <article key={m.id} className="library-row" role="row">
+            <div role="cell" className="library-art">
+              {m.poster_url ? (
+                <img src={m.poster_url} alt="" loading="lazy" />
+              ) : (
+                <span className="library-art-fallback" aria-hidden="true">
+                  HL
+                </span>
+              )}
+            </div>
+            <div role="cell" className="library-title-cell">
               <h3>{m.title}</h3>
               <p className="muted">
-                {m.published ? "Published" : "Draft"} · {m.sources?.length || 0}{" "}
-                sources
+                {m.release_year || "Movie"}
+                {m.duration_minutes ? ` · ${m.duration_minutes} min` : ""}
               </p>
+            </div>
+            <div role="cell" className="library-status">
+              <span className={`badge ${m.published ? "published" : "draft"}`}>
+                {m.published ? "Published" : "Draft"}
+              </span>
+            </div>
+            <div role="cell" className="library-source-count">
+              {m.sources?.length || 0}
+              <span className="mobile-source-label"> sources</span>
+            </div>
+            <div role="cell" className="library-actions">
               <button disabled={busy || loading} onClick={() => edit(m)}>
                 Edit
               </button>
-              <button disabled={busy || loading} onClick={() => mutate(m)}>
+              <button
+                className="secondary"
+                disabled={busy || loading}
+                onClick={() => mutate(m)}
+              >
                 {m.published ? "Unpublish" : "Publish"}
               </button>
               <button

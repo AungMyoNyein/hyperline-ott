@@ -5,13 +5,14 @@
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start -H 0.0.0.0",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit && prettier --check app"
   },
   "dependencies": {
+    "hls.js": "^1.6.0",
     "next": "^15.3.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "hls.js": "^1.6.0"
+    "react-dom": "^19.0.0"
   },
   "overrides": {
     "next": {
@@ -19,8 +20,9 @@
     }
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
     "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0"
+    "@types/react": "^19.0.0",
+    "prettier": "3.6.2",
+    "typescript": "^5.0.0"
   }
 }

@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import { Genre, Source } from "../../lib/api";
 import { Draft, newSource } from "./movie-draft";
+import ArtworkPreview from "./artwork-preview";
 function FieldError({
   name,
   errors,
@@ -91,6 +92,10 @@ export default function MovieEditor({
               </label>
             ))}
           </div>
+          <ArtworkPreview
+            poster={draft.poster_url}
+            backdrop={draft.backdrop_url}
+          />
           <label htmlFor="movie-synopsis">Synopsis</label>
           <textarea
             id="movie-synopsis"
@@ -149,7 +154,9 @@ export default function MovieEditor({
           <h3>Video sources</h3>
           <p className="muted">
             HLS, MP4 and DASH streams plus YouTube links are supported. YouTube
-            sources play as embedded videos and are not signed.
+            sources use the official embedded player. Enter a YouTube video
+            link, an HTTPS .m3u8 playlist, or an HTTPS .mpd manifest. Protected
+            streams require configured authorization.
           </p>
           <FieldError name="sources" errors={errors} />
           {draft.sources.map((s, i) => (

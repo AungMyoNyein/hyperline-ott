@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Rules\YouTubeUrl;
 use Database\Factories\VideoSourceFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,12 +24,20 @@ class VideoSource extends Model
 
     public function isPlayable(): bool
     {
-        return $this->enabled && in_array($this->kind, self::SUPPORTED_KINDS, true);
+        return $this->enabled && in_array($this->kind, self::SUPPORTED_KINDS, true)
+            && (! $this->isEmbed() || YouTubeUrl::videoId($this->url) !== null);
     }
 
     public function isEmbed(): bool
     {
         return $this->kind === 'youtube';
+    }
+
+    protected function url(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => $this->isEmbed() ? (YouTubeUrl::canonicalUrl($value) ?? $value) : $value,
+        );
     }
 
     protected $fillable = [

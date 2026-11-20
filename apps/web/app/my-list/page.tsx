@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, errorText, Movie, Page } from "../../lib/api";
 import { useSession } from "../session";
+import Artwork from "../components/artwork";
+import { Skeleton, EmptyState } from "../components/ui";
 export default function MyList() {
   const { token } = useSession();
   const [rows, setRows] = useState<
@@ -56,7 +58,9 @@ export default function MyList() {
   }
   return (
     <main>
+      <p className="eyebrow">SAVED FOR A GOOD MOMENT</p>
       <h1>My List</h1>
+      <p className="muted">Your collection. Ready when you are.</p>
       {!token ? (
         <p>
           <Link href="/login?next=%2Fmy-list">Sign in to view My List</Link>
@@ -70,7 +74,7 @@ export default function MyList() {
             </p>
           )}
           {loading ? (
-            <p role="status">Loading My List…</p>
+            <Skeleton label="Loading My List…" />
           ) : !rows.length && !error ? (
             <p>
               Your list is empty. <Link href="/movies">Explore movies</Link>
@@ -80,6 +84,10 @@ export default function MyList() {
               {rows.map((row) => (
                 <article className="saved-movie" key={row.id}>
                   <Link href={`/movies/${row.movie.slug}`}>
+                    <Artwork
+                      src={row.movie.poster_url}
+                      title={row.movie.title}
+                    />
                     <h2>{row.movie.title}</h2>
                   </Link>
                   <button

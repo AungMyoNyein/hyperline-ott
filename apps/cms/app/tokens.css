@@ -1,0 +1,40 @@
+/* HyperLine foundations. Mirrored in CMS to keep each Docker context standalone. */
+:root {
+  color-scheme: dark;
+  --bg: #08080b;
+  --bg-elev: #131318;
+  --panel: #1d1d24;
+  --panel-2: #25252e;
+  --text: #f8f8fa;
+  --muted: #a1a1aa;
+  --faint: #94949e;
+  --red: #e50914;
+  --red-hover: #bd0710;
+  --red-soft: #ff747c;
+  --line: #2e2e38;
+  --line-strong: #4c4c5a;
+  --ok: #8be0ae;
+  --warn: #f1c678;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --r-pill: 999px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-display: clamp(2.5rem, 5.3vw, 5.6rem);
+  --shadow: 0 20px 60px #0006;
+  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur: 180ms;
+  --nav-h: 80px;
+}

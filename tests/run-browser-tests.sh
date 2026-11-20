@@ -16,11 +16,13 @@ for name in ('apps/web/node_modules', 'apps/cms/node_modules', 'services/api/ven
     (target/name).symlink_to(source/name, target_is_directory=True)
 for name in ('bootstrap/cache', 'storage/framework/cache/data', 'storage/framework/views', 'storage/framework/sessions', 'storage/logs'):
     (target/'services/api'/name).mkdir(parents=True, exist_ok=True)
+(target/'services/api/.env').touch()
 ISOLATE
+    export HYPERLINE_UI_SNAPSHOT_DIR="$PWD/docs/ui/screenshots"
     export HYPERLINE_BROWSER_ISOLATED=1
     export APP_CONFIG_CACHE="$fixture_root/services/api/bootstrap/cache/config.php"
     export DB_URL=''
-    exec bash "$fixture_root/tests/run-browser-tests.sh"
+    exec bash "$fixture_root/tests/run-browser-tests.sh" "$@"
 fi
 python3 - <<'PY'
 import socket
@@ -69,6 +71,7 @@ if [ ! -f "/tmp/hyperline-test-media/dash/manifest.mpd" ]; then
     ffmpeg -hide_banner -loglevel error -f lavfi -i "testsrc2=size=320x180:rate=24" -t 8 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -g 48 -sc_threshold 0 -f dash -seg_duration 2 -use_template 1 -use_timeline 1 -init_seg_name 'init-$RepresentationID$.m4s' -media_seg_name 'seg-$RepresentationID$-$Number$.m4s' /tmp/hyperline-test-media/dash/manifest.mpd
 fi
 openssl req -x509 -newkey rsa:2048 -nodes -keyout /tmp/hyperline-test-media/key.pem -out /tmp/hyperline-test-media/cert.pem -days 1 -subj /CN=127.0.0.1 2>/tmp/hyperline-test-media/cert.log
+apps/web/node_modules/.bin/tsc -p tests/e2e/tsconfig.json
 npm run build --prefix apps/web
 npm run build --prefix apps/cms
 pids=()
@@ -95,4 +98,9 @@ for url in ('http://127.0.0.1:18081/api/v1/health','http://127.0.0.1:18082','htt
             if attempt==59: raise
             time.sleep(.5)
 PY
-npm run test:e2e --prefix apps/web
+if [ "${HYPERLINE_UPDATE_UI_SNAPSHOTS:-0}" = 1 ]; then
+    # Refresh only the deterministic visual fixtures, then compare normally in
+    # the full suite against the same production builds.
+    npm run test:e2e --prefix apps/web -- premium-visual.spec.ts --update-snapshots
+fi
+npm run test:e2e --prefix apps/web -- "$@"

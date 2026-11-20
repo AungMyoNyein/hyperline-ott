@@ -117,18 +117,31 @@ export default function SeriesLibrary({ token }: Props) {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
-  const [filters, setFilters] = useState({ q: "", published: "", category: "" });
+  const [filters, setFilters] = useState({
+    q: "",
+    published: "",
+    category: "",
+  });
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState<Series | null>(null);
-  const [seriesForm, setSeriesForm] = useState<
-    { editingId: number | null; draft: SeriesDraft; clean: string } | null
-  >(null);
-  const [seasonForm, setSeasonForm] = useState<
-    { seriesId: number; editingId: number | null; draft: SeasonDraft; clean: string } | null
-  >(null);
-  const [episodeForm, setEpisodeForm] = useState<
-    { seriesId: number; seasonId: number; editingId: number | null; draft: EpisodeDraft; clean: string } | null
-  >(null);
+  const [seriesForm, setSeriesForm] = useState<{
+    editingId: number | null;
+    draft: SeriesDraft;
+    clean: string;
+  } | null>(null);
+  const [seasonForm, setSeasonForm] = useState<{
+    seriesId: number;
+    editingId: number | null;
+    draft: SeasonDraft;
+    clean: string;
+  } | null>(null);
+  const [episodeForm, setEpisodeForm] = useState<{
+    seriesId: number;
+    seasonId: number;
+    editingId: number | null;
+    draft: EpisodeDraft;
+    clean: string;
+  } | null>(null);
   const dirty = useMemo(() => {
     for (const form of [seriesForm, seasonForm, episodeForm]) {
       if (form && JSON.stringify(form.draft) !== form.clean) return true;
@@ -145,7 +158,9 @@ export default function SeriesLibrary({ token }: Props) {
     return () => window.removeEventListener("beforeunload", leave);
   }, [dirty]);
   function discardForms(): boolean {
-    return !dirty || window.confirm("Discard unsaved series/season/episode changes?");
+    return (
+      !dirty || window.confirm("Discard unsaved series/season/episode changes?")
+    );
   }
   function fail(e: unknown) {
     if (e instanceof ApiError) setFieldErrors(e.errors);
@@ -172,9 +187,13 @@ export default function SeriesLibrary({ token }: Props) {
     const c = new AbortController();
     setLoading(true);
     setError("");
-    api<Page<Series>>(`/admin/series?page=${page}&per_page=25&${query}`, token, {
-      signal: c.signal,
-    })
+    api<Page<Series>>(
+      `/admin/series?page=${page}&per_page=25&${query}`,
+      token,
+      {
+        signal: c.signal,
+      },
+    )
       .then((j) => {
         setSeriesList(j.data);
         setLast(j.meta.last_page);
@@ -189,7 +208,10 @@ export default function SeriesLibrary({ token }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, page, query]);
   async function reloadList() {
-    const j = await api<Page<Series>>(`/admin/series?page=${page}&per_page=25&${query}`, token);
+    const j = await api<Page<Series>>(
+      `/admin/series?page=${page}&per_page=25&${query}`,
+      token,
+    );
     setSeriesList(j.data);
     setLast(j.meta.last_page);
   }
@@ -278,7 +300,8 @@ export default function SeriesLibrary({ token }: Props) {
       setSeriesForm(null);
       setFieldErrors({});
       await reloadList();
-      if (editingId && expanded?.id === editingId) await reloadExpanded(editingId);
+      if (editingId && expanded?.id === editingId)
+        await reloadExpanded(editingId);
       else if (!editingId) await reloadExpanded(j.data.id);
       setMessage("Series saved.");
     });
@@ -319,7 +342,9 @@ export default function SeriesLibrary({ token }: Props) {
         body: JSON.stringify({ published: !season.published }),
       });
       await reloadExpanded(s.id);
-      setMessage(season.published ? "Season unpublished." : "Season published.");
+      setMessage(
+        season.published ? "Season unpublished." : "Season published.",
+      );
     });
   }
   async function removeSeason(s: Series, season: Season) {
@@ -334,7 +359,10 @@ export default function SeriesLibrary({ token }: Props) {
       await api(`/admin/series/${s.id}/seasons/${season.id}`, token, {
         method: "DELETE",
       });
-      if (episodeForm?.editingId && season.episodes?.some((ep) => ep.id === episodeForm.editingId))
+      if (
+        episodeForm?.editingId &&
+        season.episodes?.some((ep) => ep.id === episodeForm.editingId)
+      )
         setEpisodeForm(null);
       await reloadExpanded(s.id);
       await reloadList();
@@ -384,10 +412,14 @@ export default function SeriesLibrary({ token }: Props) {
   }
   async function toggleEpisodePublish(s: Series, season: Season, ep: Episode) {
     await run(async () => {
-      await api(`/admin/series/${s.id}/seasons/${season.id}/episodes/${ep.id}`, token, {
-        method: "PATCH",
-        body: JSON.stringify({ published: !ep.published }),
-      });
+      await api(
+        `/admin/series/${s.id}/seasons/${season.id}/episodes/${ep.id}`,
+        token,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ published: !ep.published }),
+        },
+      );
       await reloadExpanded(s.id);
       await reloadList();
       setMessage(ep.published ? "Episode unpublished." : "Episode published.");
@@ -401,9 +433,13 @@ export default function SeriesLibrary({ token }: Props) {
     )
       return;
     await run(async () => {
-      await api(`/admin/series/${s.id}/seasons/${season.id}/episodes/${ep.id}`, token, {
-        method: "DELETE",
-      });
+      await api(
+        `/admin/series/${s.id}/seasons/${season.id}/episodes/${ep.id}`,
+        token,
+        {
+          method: "DELETE",
+        },
+      );
       if (episodeForm?.editingId === ep.id) setEpisodeForm(null);
       await reloadExpanded(s.id);
       await reloadList();
@@ -418,16 +454,34 @@ export default function SeriesLibrary({ token }: Props) {
         episode_number: String(ep.episode_number),
         title: ep.title || "",
         synopsis: ep.synopsis || "",
-        duration_seconds: ep.duration_seconds ? String(ep.duration_seconds) : "",
+        duration_seconds: ep.duration_seconds
+          ? String(ep.duration_seconds)
+          : "",
         still_url: ep.still_url || "",
         published: !!ep.published,
-        sources: (ep.sources?.length ? ep.sources : [newEpisodeSource()]).map((src) => ({ ...src })),
+        sources: (ep.sources?.length ? ep.sources : [newEpisodeSource()]).map(
+          (src) => ({ ...src }),
+        ),
       };
-      setEpisodeForm({ seriesId: s.id, seasonId: season.id, editingId: ep.id, draft, clean: JSON.stringify(draft) });
+      setEpisodeForm({
+        seriesId: s.id,
+        seasonId: season.id,
+        editingId: ep.id,
+        draft,
+        clean: JSON.stringify(draft),
+      });
     } else {
-      const next = Math.max(0, ...(season.episodes || []).map((x) => x.episode_number)) + 1;
+      const next =
+        Math.max(0, ...(season.episodes || []).map((x) => x.episode_number)) +
+        1;
       const draft = blankEpisode(next);
-      setEpisodeForm({ seriesId: s.id, seasonId: season.id, editingId: null, draft, clean: JSON.stringify(draft) });
+      setEpisodeForm({
+        seriesId: s.id,
+        seasonId: season.id,
+        editingId: null,
+        draft,
+        clean: JSON.stringify(draft),
+      });
     }
     setSeasonForm(null);
     setSeriesForm(null);
@@ -443,7 +497,11 @@ export default function SeriesLibrary({ token }: Props) {
             draft: {
               ...f.draft,
               sources: f.draft.sources.map((src, i) =>
-                i === index ? { ...src, ...patch } : patch.is_default ? { ...src, is_default: false } : src,
+                i === index
+                  ? { ...src, ...patch }
+                  : patch.is_default
+                    ? { ...src, is_default: false }
+                    : src,
               ),
             },
           }
@@ -461,7 +519,11 @@ export default function SeriesLibrary({ token }: Props) {
             if (!discardForms()) return;
             closeForms();
             const draft = blankSeries();
-            setSeriesForm({ editingId: null, draft, clean: JSON.stringify(draft) });
+            setSeriesForm({
+              editingId: null,
+              draft,
+              clean: JSON.stringify(draft),
+            });
             setExpanded(null);
           }}
         >
@@ -469,8 +531,9 @@ export default function SeriesLibrary({ token }: Props) {
         </button>
       </div>
       <p className="muted">
-        Create series here or import them with <code>hyperline:import-series</code>. Seasons and
-        episodes are managed inline; deletion cascades and asks for confirmation.
+        Create series here or import them with{" "}
+        <code>hyperline:import-series</code>. Seasons and episodes are managed
+        inline; deletion cascades and asks for confirmation.
       </p>
       {error && (
         <p className="error" role="alert">
@@ -506,7 +569,9 @@ export default function SeriesLibrary({ token }: Props) {
           <select
             aria-label="Series status filter"
             value={filters.published}
-            onChange={(e) => setFilters((f) => ({ ...f, published: e.target.value }))}
+            onChange={(e) =>
+              setFilters((f) => ({ ...f, published: e.target.value }))
+            }
           >
             <option value="">All</option>
             <option value="1">Published</option>
@@ -520,7 +585,9 @@ export default function SeriesLibrary({ token }: Props) {
             maxLength={60}
             placeholder="e.g. vertical"
             value={filters.category}
-            onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
+            onChange={(e) =>
+              setFilters((f) => ({ ...f, category: e.target.value }))
+            }
           />
         </label>
         <button type="submit" disabled={loading || busy}>
@@ -528,9 +595,14 @@ export default function SeriesLibrary({ token }: Props) {
         </button>
       </form>
       {seriesForm && (
-        <form onSubmit={saveSeries} aria-label={seriesForm.editingId ? "Edit series" : "Create series"}>
+        <form
+          onSubmit={saveSeries}
+          aria-label={seriesForm.editingId ? "Edit series" : "Create series"}
+        >
           <fieldset disabled={busy}>
-            <legend>{seriesForm.editingId ? "Edit series" : "Create series"}</legend>
+            <legend>
+              {seriesForm.editingId ? "Edit series" : "Create series"}
+            </legend>
             <div className="fields">
               {(
                 [
@@ -548,13 +620,20 @@ export default function SeriesLibrary({ token }: Props) {
                   <input
                     aria-label={label}
                     aria-invalid={!!fieldErrors[key]}
-                    aria-describedby={fieldErrors[key] ? `error-${key}` : undefined}
+                    aria-describedby={
+                      fieldErrors[key] ? `error-${key}` : undefined
+                    }
                     type={type}
                     required={required}
                     value={seriesForm.draft[key]}
                     onChange={(e) =>
                       setSeriesForm((f) =>
-                        f ? { ...f, draft: { ...f.draft, [key]: e.target.value } } : f,
+                        f
+                          ? {
+                              ...f,
+                              draft: { ...f.draft, [key]: e.target.value },
+                            }
+                          : f,
                       )
                     }
                   />
@@ -568,7 +647,11 @@ export default function SeriesLibrary({ token }: Props) {
               rows={3}
               value={seriesForm.draft.synopsis}
               onChange={(e) =>
-                setSeriesForm((f) => (f ? { ...f, draft: { ...f.draft, synopsis: e.target.value } } : f))
+                setSeriesForm((f) =>
+                  f
+                    ? { ...f, draft: { ...f.draft, synopsis: e.target.value } }
+                    : f,
+                )
               }
             />
             <FieldError name="synopsis" errors={fieldErrors} />
@@ -579,7 +662,12 @@ export default function SeriesLibrary({ token }: Props) {
                   checked={seriesForm.draft.published}
                   onChange={(e) =>
                     setSeriesForm((f) =>
-                      f ? { ...f, draft: { ...f.draft, published: e.target.checked } } : f,
+                      f
+                        ? {
+                            ...f,
+                            draft: { ...f.draft, published: e.target.checked },
+                          }
+                        : f,
                     )
                   }
                 />{" "}
@@ -591,7 +679,12 @@ export default function SeriesLibrary({ token }: Props) {
                   checked={seriesForm.draft.featured}
                   onChange={(e) =>
                     setSeriesForm((f) =>
-                      f ? { ...f, draft: { ...f.draft, featured: e.target.checked } } : f,
+                      f
+                        ? {
+                            ...f,
+                            draft: { ...f.draft, featured: e.target.checked },
+                          }
+                        : f,
                     )
                   }
                 />{" "}
@@ -600,7 +693,11 @@ export default function SeriesLibrary({ token }: Props) {
             </div>
             <div>
               <button type="submit">{busy ? "Saving…" : "Save series"}</button>
-              <button type="button" className="secondary" onClick={() => discardForms() && closeForms()}>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => discardForms() && closeForms()}
+              >
                 Cancel
               </button>
             </div>
@@ -616,12 +713,15 @@ export default function SeriesLibrary({ token }: Props) {
             <div>
               <h3>
                 {s.title}{" "}
-                <span className={`badge ${s.published ? "published" : "draft"}`}>
+                <span
+                  className={`badge ${s.published ? "published" : "draft"}`}
+                >
                   {s.published ? "Published" : "Draft"}
                 </span>
               </h3>
               <p className="muted">
-                {s.season_count ?? 0} season(s) · {s.episode_count ?? 0} episode(s)
+                {s.season_count ?? 0} season(s) · {s.episode_count ?? 0}{" "}
+                episode(s)
                 {s.category ? ` · ${s.category}` : ""}
                 {s.language ? ` · ${s.language}` : ""}
               </p>
@@ -645,16 +745,27 @@ export default function SeriesLibrary({ token }: Props) {
                     featured: !!s.featured,
                     published: !!s.published,
                   };
-                  setSeriesForm({ editingId: s.id, draft, clean: JSON.stringify(draft) });
+                  setSeriesForm({
+                    editingId: s.id,
+                    draft,
+                    clean: JSON.stringify(draft),
+                  });
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
               >
                 Edit
               </button>
-              <button disabled={busy || loading} onClick={() => toggleSeriesPublish(s)}>
+              <button
+                disabled={busy || loading}
+                onClick={() => toggleSeriesPublish(s)}
+              >
                 {s.published ? "Unpublish" : "Publish"}
               </button>
-              <button className="secondary" disabled={busy || loading} onClick={() => removeSeries(s)}>
+              <button
+                className="secondary"
+                disabled={busy || loading}
+                onClick={() => removeSeries(s)}
+              >
                 Delete
               </button>
               {expanded?.id === s.id && (
@@ -663,11 +774,14 @@ export default function SeriesLibrary({ token }: Props) {
                     <div className="season-block" key={season.id}>
                       <h4>
                         {seasonName(season.season_number, season.title)}{" "}
-                        <span className={`badge ${season.published ? "published" : "draft"}`}>
+                        <span
+                          className={`badge ${season.published ? "published" : "draft"}`}
+                        >
                           {season.published ? "Published" : "Draft"}
                         </span>{" "}
                         <span className="muted">
-                          {season.episodes?.length ?? season.episode_count ?? 0} episode(s)
+                          {season.episodes?.length ?? season.episode_count ?? 0}{" "}
+                          episode(s)
                         </span>
                       </h4>
                       <p>
@@ -676,7 +790,9 @@ export default function SeriesLibrary({ token }: Props) {
                           disabled={busy}
                           onClick={() => toggleSeasonPublish(s, season)}
                         >
-                          {season.published ? "Unpublish season" : "Publish season"}
+                          {season.published
+                            ? "Unpublish season"
+                            : "Publish season"}
                         </button>
                         <button
                           className="secondary"
@@ -692,7 +808,12 @@ export default function SeriesLibrary({ token }: Props) {
                               backdrop_url: season.backdrop_url || "",
                               published: !!season.published,
                             };
-                            setSeasonForm({ seriesId: s.id, editingId: season.id, draft, clean: JSON.stringify(draft) });
+                            setSeasonForm({
+                              seriesId: s.id,
+                              editingId: season.id,
+                              draft,
+                              clean: JSON.stringify(draft),
+                            });
                             setEpisodeForm(null);
                           }}
                         >
@@ -704,16 +825,22 @@ export default function SeriesLibrary({ token }: Props) {
                         >
                           Add episode
                         </button>
-                        <button className="secondary" disabled={busy} onClick={() => removeSeason(s, season)}>
+                        <button
+                          className="secondary"
+                          disabled={busy}
+                          onClick={() => removeSeason(s, season)}
+                        >
                           Delete season
                         </button>
                       </p>
                       <div className="episode-list">
                         {(season.episodes || []).map((ep) => (
                           <p key={ep.id}>
-                            <strong>E{ep.episode_number}</strong> {ep.title || ""}{" "}
+                            <strong>E{ep.episode_number}</strong>{" "}
+                            {ep.title || ""}{" "}
                             <span className="muted">
-                              {ep.published ? "Published" : "Draft"} · {ep.sources?.length || 0} sources
+                              {ep.published ? "Published" : "Draft"} ·{" "}
+                              {ep.sources?.length || 0} sources
                             </span>{" "}
                             <button
                               className="secondary"
@@ -725,25 +852,42 @@ export default function SeriesLibrary({ token }: Props) {
                             <button
                               className="secondary"
                               disabled={busy}
-                              onClick={() => toggleEpisodePublish(s, season, ep)}
+                              onClick={() =>
+                                toggleEpisodePublish(s, season, ep)
+                              }
                             >
                               {ep.published ? "Unpublish" : "Publish"}
                             </button>
-                            <button className="secondary" disabled={busy} onClick={() => removeEpisode(s, season, ep)}>
+                            <button
+                              className="secondary"
+                              disabled={busy}
+                              onClick={() => removeEpisode(s, season, ep)}
+                            >
                               Delete
                             </button>
                           </p>
                         ))}
                         {!(season.episodes || []).length && (
-                          <p className="muted">No episodes in this season yet.</p>
+                          <p className="muted">
+                            No episodes in this season yet.
+                          </p>
                         )}
                       </div>
                       {episodeForm && episodeForm.seasonId === season.id && (
-                        <form onSubmit={saveEpisode} aria-label={episodeForm.editingId ? "Edit episode" : "Add episode"}>
+                        <form
+                          onSubmit={saveEpisode}
+                          aria-label={
+                            episodeForm.editingId
+                              ? "Edit episode"
+                              : "Add episode"
+                          }
+                        >
                           <fieldset disabled={busy}>
                             <legend>
-                              {episodeForm.editingId ? "Edit episode" : "Add episode"} ·{" "}
-                              {seasonName(season.season_number, season.title)}
+                              {episodeForm.editingId
+                                ? "Edit episode"
+                                : "Add episode"}{" "}
+                              · {seasonName(season.season_number, season.title)}
                             </legend>
                             <div className="fields">
                               <label>
@@ -755,16 +899,25 @@ export default function SeriesLibrary({ token }: Props) {
                                   max={2000}
                                   required
                                   value={episodeForm.draft.episode_number}
-                                  onChange={(e) => patchEpisode({ episode_number: e.target.value })}
+                                  onChange={(e) =>
+                                    patchEpisode({
+                                      episode_number: e.target.value,
+                                    })
+                                  }
                                 />
-                                <FieldError name="episode_number" errors={fieldErrors} />
+                                <FieldError
+                                  name="episode_number"
+                                  errors={fieldErrors}
+                                />
                               </label>
                               <label>
                                 Title
                                 <input
                                   aria-label="Episode title"
                                   value={episodeForm.draft.title}
-                                  onChange={(e) => patchEpisode({ title: e.target.value })}
+                                  onChange={(e) =>
+                                    patchEpisode({ title: e.target.value })
+                                  }
                                 />
                                 <FieldError name="title" errors={fieldErrors} />
                               </label>
@@ -776,9 +929,16 @@ export default function SeriesLibrary({ token }: Props) {
                                   min={1}
                                   max={86400}
                                   value={episodeForm.draft.duration_seconds}
-                                  onChange={(e) => patchEpisode({ duration_seconds: e.target.value })}
+                                  onChange={(e) =>
+                                    patchEpisode({
+                                      duration_seconds: e.target.value,
+                                    })
+                                  }
                                 />
-                                <FieldError name="duration_seconds" errors={fieldErrors} />
+                                <FieldError
+                                  name="duration_seconds"
+                                  errors={fieldErrors}
+                                />
                               </label>
                               <label>
                                 Still HTTPS URL
@@ -786,9 +946,14 @@ export default function SeriesLibrary({ token }: Props) {
                                   aria-label="Still HTTPS URL"
                                   type="url"
                                   value={episodeForm.draft.still_url}
-                                  onChange={(e) => patchEpisode({ still_url: e.target.value })}
+                                  onChange={(e) =>
+                                    patchEpisode({ still_url: e.target.value })
+                                  }
                                 />
-                                <FieldError name="still_url" errors={fieldErrors} />
+                                <FieldError
+                                  name="still_url"
+                                  errors={fieldErrors}
+                                />
                               </label>
                             </div>
                             <label htmlFor="episode-synopsis">Synopsis</label>
@@ -796,14 +961,20 @@ export default function SeriesLibrary({ token }: Props) {
                               id="episode-synopsis"
                               rows={2}
                               value={episodeForm.draft.synopsis}
-                              onChange={(e) => patchEpisode({ synopsis: e.target.value })}
+                              onChange={(e) =>
+                                patchEpisode({ synopsis: e.target.value })
+                              }
                             />
                             <div className="checks">
                               <label>
                                 <input
                                   type="checkbox"
                                   checked={episodeForm.draft.published}
-                                  onChange={(e) => patchEpisode({ published: e.target.checked })}
+                                  onChange={(e) =>
+                                    patchEpisode({
+                                      published: e.target.checked,
+                                    })
+                                  }
                                 />{" "}
                                 Published
                               </label>
@@ -811,9 +982,11 @@ export default function SeriesLibrary({ token }: Props) {
                             <h5>Video sources</h5>
                             <p className="muted">
                               HLS, MP4 and DASH streams plus YouTube links are
-                              supported. YouTube sources play as embedded
-                              videos and are not signed. Saving replaces the
-                              full source list.
+                              supported. YouTube links are normalized and use
+                              the official player. HLS requires HTTPS .m3u8;
+                              DASH requires HTTPS .mpd. Protected streams
+                              require configured authorization. Saving replaces
+                              the full source list.
                             </p>
                             <FieldError name="sources" errors={fieldErrors} />
                             {episodeForm.draft.sources.map((src, i) => (
@@ -826,9 +999,16 @@ export default function SeriesLibrary({ token }: Props) {
                                       aria-label="Label"
                                       required
                                       value={src.label}
-                                      onChange={(e) => patchEpisodeSource(i, { label: e.target.value })}
+                                      onChange={(e) =>
+                                        patchEpisodeSource(i, {
+                                          label: e.target.value,
+                                        })
+                                      }
                                     />
-                                    <FieldError name={`sources.${i}.label`} errors={fieldErrors} />
+                                    <FieldError
+                                      name={`sources.${i}.label`}
+                                      errors={fieldErrors}
+                                    />
                                   </label>
                                   <label>
                                     Format
@@ -836,15 +1016,23 @@ export default function SeriesLibrary({ token }: Props) {
                                       aria-label="Format"
                                       value={src.kind}
                                       onChange={(e) =>
-                                        patchEpisodeSource(i, { kind: e.target.value as Source["kind"] })
+                                        patchEpisodeSource(i, {
+                                          kind: e.target
+                                            .value as Source["kind"],
+                                        })
                                       }
                                     >
                                       <option value="hls">HLS</option>
                                       <option value="mp4">MP4</option>
                                       <option value="dash">DASH</option>
-                                      <option value="youtube">YouTube link</option>
+                                      <option value="youtube">
+                                        YouTube link
+                                      </option>
                                     </select>
-                                    <FieldError name={`sources.${i}.kind`} errors={fieldErrors} />
+                                    <FieldError
+                                      name={`sources.${i}.kind`}
+                                      errors={fieldErrors}
+                                    />
                                   </label>
                                   <label className="wide">
                                     HTTPS stream URL
@@ -853,16 +1041,27 @@ export default function SeriesLibrary({ token }: Props) {
                                       type="url"
                                       required
                                       value={src.url || ""}
-                                      onChange={(e) => patchEpisodeSource(i, { url: e.target.value })}
+                                      onChange={(e) =>
+                                        patchEpisodeSource(i, {
+                                          url: e.target.value,
+                                        })
+                                      }
                                     />
-                                    <FieldError name={`sources.${i}.url`} errors={fieldErrors} />
+                                    <FieldError
+                                      name={`sources.${i}.url`}
+                                      errors={fieldErrors}
+                                    />
                                   </label>
                                   <label>
                                     Quality
                                     <input
                                       aria-label="Quality"
                                       value={src.quality || ""}
-                                      onChange={(e) => patchEpisodeSource(i, { quality: e.target.value })}
+                                      onChange={(e) =>
+                                        patchEpisodeSource(i, {
+                                          quality: e.target.value,
+                                        })
+                                      }
                                     />
                                   </label>
                                   <label>
@@ -870,7 +1069,11 @@ export default function SeriesLibrary({ token }: Props) {
                                     <input
                                       aria-label="Language"
                                       value={src.language || ""}
-                                      onChange={(e) => patchEpisodeSource(i, { language: e.target.value })}
+                                      onChange={(e) =>
+                                        patchEpisodeSource(i, {
+                                          language: e.target.value,
+                                        })
+                                      }
                                     />
                                   </label>
                                 </div>
@@ -879,7 +1082,11 @@ export default function SeriesLibrary({ token }: Props) {
                                     <input
                                       type="checkbox"
                                       checked={!!src.enabled}
-                                      onChange={(e) => patchEpisodeSource(i, { enabled: e.target.checked })}
+                                      onChange={(e) =>
+                                        patchEpisodeSource(i, {
+                                          enabled: e.target.checked,
+                                        })
+                                      }
                                     />{" "}
                                     Enabled
                                   </label>
@@ -888,16 +1095,25 @@ export default function SeriesLibrary({ token }: Props) {
                                       type="radio"
                                       name={`episode-default-source-${episodeForm.editingId ?? "new"}`}
                                       checked={!!src.is_default}
-                                      onChange={() => patchEpisodeSource(i, { is_default: true })}
+                                      onChange={() =>
+                                        patchEpisodeSource(i, {
+                                          is_default: true,
+                                        })
+                                      }
                                     />{" "}
                                     Default
                                   </label>
                                   <button
                                     type="button"
-                                    disabled={episodeForm.draft.sources.length === 1}
+                                    disabled={
+                                      episodeForm.draft.sources.length === 1
+                                    }
                                     onClick={() =>
                                       patchEpisode({
-                                        sources: episodeForm.draft.sources.filter((_, n) => n !== i),
+                                        sources:
+                                          episodeForm.draft.sources.filter(
+                                            (_, n) => n !== i,
+                                          ),
                                       })
                                     }
                                   >
@@ -925,11 +1141,16 @@ export default function SeriesLibrary({ token }: Props) {
                               Add source
                             </button>
                             <div>
-                              <button type="submit">{busy ? "Saving…" : "Save episode"}</button>
+                              <button type="submit">
+                                {busy ? "Saving…" : "Save episode"}
+                              </button>
                               <button
                                 type="button"
                                 className="secondary"
-                                onClick={() => discardForms() && (setEpisodeForm(null), setFieldErrors({}))}
+                                onClick={() =>
+                                  discardForms() &&
+                                  (setEpisodeForm(null), setFieldErrors({}))
+                                }
                               >
                                 Cancel
                               </button>
@@ -946,9 +1167,19 @@ export default function SeriesLibrary({ token }: Props) {
                         if (!discardForms()) return;
                         setFieldErrors({});
                         const nextNumber =
-                          Math.max(0, ...(expanded.seasons || []).map((x) => x.season_number)) + 1;
+                          Math.max(
+                            0,
+                            ...(expanded.seasons || []).map(
+                              (x) => x.season_number,
+                            ),
+                          ) + 1;
                         const draft = blankSeason(nextNumber);
-                        setSeasonForm({ seriesId: s.id, editingId: null, draft, clean: JSON.stringify(draft) });
+                        setSeasonForm({
+                          seriesId: s.id,
+                          editingId: null,
+                          draft,
+                          clean: JSON.stringify(draft),
+                        });
                         setEpisodeForm(null);
                       }}
                     >
@@ -956,9 +1187,16 @@ export default function SeriesLibrary({ token }: Props) {
                     </button>
                   </p>
                   {seasonForm && seasonForm.seriesId === s.id && (
-                    <form onSubmit={saveSeason} aria-label={seasonForm.editingId ? "Edit season" : "Add season"}>
+                    <form
+                      onSubmit={saveSeason}
+                      aria-label={
+                        seasonForm.editingId ? "Edit season" : "Add season"
+                      }
+                    >
                       <fieldset disabled={busy}>
-                        <legend>{seasonForm.editingId ? "Edit season" : "Add season"}</legend>
+                        <legend>
+                          {seasonForm.editingId ? "Edit season" : "Add season"}
+                        </legend>
                         <div className="fields">
                           <label>
                             Season number (0 = specials)
@@ -971,11 +1209,22 @@ export default function SeriesLibrary({ token }: Props) {
                               value={seasonForm.draft.season_number}
                               onChange={(e) =>
                                 setSeasonForm((f) =>
-                                  f ? { ...f, draft: { ...f.draft, season_number: e.target.value } } : f,
+                                  f
+                                    ? {
+                                        ...f,
+                                        draft: {
+                                          ...f.draft,
+                                          season_number: e.target.value,
+                                        },
+                                      }
+                                    : f,
                                 )
                               }
                             />
-                            <FieldError name="season_number" errors={fieldErrors} />
+                            <FieldError
+                              name="season_number"
+                              errors={fieldErrors}
+                            />
                           </label>
                           <label>
                             Season title
@@ -983,7 +1232,17 @@ export default function SeriesLibrary({ token }: Props) {
                               aria-label="Season title"
                               value={seasonForm.draft.title}
                               onChange={(e) =>
-                                setSeasonForm((f) => (f ? { ...f, draft: { ...f.draft, title: e.target.value } } : f))
+                                setSeasonForm((f) =>
+                                  f
+                                    ? {
+                                        ...f,
+                                        draft: {
+                                          ...f.draft,
+                                          title: e.target.value,
+                                        },
+                                      }
+                                    : f,
+                                )
                               }
                             />
                             <FieldError name="title" errors={fieldErrors} />
@@ -996,11 +1255,22 @@ export default function SeriesLibrary({ token }: Props) {
                               value={seasonForm.draft.poster_url}
                               onChange={(e) =>
                                 setSeasonForm((f) =>
-                                  f ? { ...f, draft: { ...f.draft, poster_url: e.target.value } } : f,
+                                  f
+                                    ? {
+                                        ...f,
+                                        draft: {
+                                          ...f.draft,
+                                          poster_url: e.target.value,
+                                        },
+                                      }
+                                    : f,
                                 )
                               }
                             />
-                            <FieldError name="poster_url" errors={fieldErrors} />
+                            <FieldError
+                              name="poster_url"
+                              errors={fieldErrors}
+                            />
                           </label>
                           <label>
                             Backdrop HTTPS URL
@@ -1010,11 +1280,22 @@ export default function SeriesLibrary({ token }: Props) {
                               value={seasonForm.draft.backdrop_url}
                               onChange={(e) =>
                                 setSeasonForm((f) =>
-                                  f ? { ...f, draft: { ...f.draft, backdrop_url: e.target.value } } : f,
+                                  f
+                                    ? {
+                                        ...f,
+                                        draft: {
+                                          ...f.draft,
+                                          backdrop_url: e.target.value,
+                                        },
+                                      }
+                                    : f,
                                 )
                               }
                             />
-                            <FieldError name="backdrop_url" errors={fieldErrors} />
+                            <FieldError
+                              name="backdrop_url"
+                              errors={fieldErrors}
+                            />
                           </label>
                         </div>
                         <label htmlFor="season-synopsis">Season synopsis</label>
@@ -1023,7 +1304,17 @@ export default function SeriesLibrary({ token }: Props) {
                           rows={2}
                           value={seasonForm.draft.synopsis}
                           onChange={(e) =>
-                            setSeasonForm((f) => (f ? { ...f, draft: { ...f.draft, synopsis: e.target.value } } : f))
+                            setSeasonForm((f) =>
+                              f
+                                ? {
+                                    ...f,
+                                    draft: {
+                                      ...f.draft,
+                                      synopsis: e.target.value,
+                                    },
+                                  }
+                                : f,
+                            )
                           }
                         />
                         <div className="checks">
@@ -1033,7 +1324,15 @@ export default function SeriesLibrary({ token }: Props) {
                               checked={seasonForm.draft.published}
                               onChange={(e) =>
                                 setSeasonForm((f) =>
-                                  f ? { ...f, draft: { ...f.draft, published: e.target.checked } } : f,
+                                  f
+                                    ? {
+                                        ...f,
+                                        draft: {
+                                          ...f.draft,
+                                          published: e.target.checked,
+                                        },
+                                      }
+                                    : f,
                                 )
                               }
                             />{" "}
@@ -1041,11 +1340,16 @@ export default function SeriesLibrary({ token }: Props) {
                           </label>
                         </div>
                         <div>
-                          <button type="submit">{busy ? "Saving…" : "Save season"}</button>
+                          <button type="submit">
+                            {busy ? "Saving…" : "Save season"}
+                          </button>
                           <button
                             type="button"
                             className="secondary"
-                            onClick={() => discardForms() && (setSeasonForm(null), setFieldErrors({}))}
+                            onClick={() =>
+                              discardForms() &&
+                              (setSeasonForm(null), setFieldErrors({}))
+                            }
                           >
                             Cancel
                           </button>
@@ -1060,13 +1364,19 @@ export default function SeriesLibrary({ token }: Props) {
         ))}
       </div>
       <nav aria-label="Series pages">
-        <button disabled={page <= 1 || loading || busy} onClick={() => setPage((p) => p - 1)}>
+        <button
+          disabled={page <= 1 || loading || busy}
+          onClick={() => setPage((p) => p - 1)}
+        >
           Previous
         </button>
         <span>
           Page {page} of {last}
         </span>
-        <button disabled={page >= last || loading || busy} onClick={() => setPage((p) => p + 1)}>
+        <button
+          disabled={page >= last || loading || busy}
+          onClick={() => setPage((p) => p + 1)}
+        >
           Next
         </button>
       </nav>

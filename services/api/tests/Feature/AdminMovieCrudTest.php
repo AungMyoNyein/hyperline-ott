@@ -246,6 +246,7 @@ class AdminMovieCrudTest extends TestCase
 
     public function test_audit_trail_records_every_mutation_without_copying_stream_locations(): void
     {
+        $this->freezeTime();
         $response = $this->asAdmin()->postJson('/api/v1/admin/movies', $this->moviePayload());
         $id = $response->json('data.id');
 

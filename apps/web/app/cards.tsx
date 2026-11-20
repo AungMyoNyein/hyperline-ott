@@ -1,32 +1,109 @@
 import Link from "next/link";
-import {
-  ContinueWatchingItem,
-  isEpisodeRow,
-  Movie,
-  Series,
-} from "../lib/api";
+import { ContinueWatchingItem, isEpisodeRow, Movie, Series } from "../lib/api";
+import Artwork from "./components/artwork";
+import Rail from "./components/rail";
+import { Progress } from "./components/ui";
+function MovieCard({ movie: m }: { movie: Movie }) {
+  return (
+    <article className="card">
+      <Link
+        href={`/movies/${encodeURIComponent(m.slug)}`}
+        className="card-main"
+        aria-label={`${m.title} — details`}
+      >
+        <div className="card-image">
+          <Artwork src={m.poster_url} title={m.title} />
+          <span className="card-type">Movie</span>
+          <span className="card-reveal" aria-hidden="true">
+            Explore title ↗
+          </span>
+        </div>
+        <div className="card-body">
+          <h3>{m.title}</h3>
+          <p className="muted">
+            {[
+              m.release_year,
+              m.duration_minutes ? `${m.duration_minutes} min` : null,
+              m.genres?.[0]?.name,
+            ]
+              .filter(Boolean)
+              .join(" · ") || "Movie"}
+          </p>
+        </div>
+      </Link>
+      <div className="card-actions">
+        {m.playable && (
+          <Link href={`/watch?id=${m.id}`}>
+            Watch <span aria-hidden="true">▷</span>
+          </Link>
+        )}
+        <Link href={`/movies/${encodeURIComponent(m.slug)}`}>
+          Details <span aria-hidden="true">↗</span>
+        </Link>
+      </div>
+    </article>
+  );
+}
+function SeriesCard({ series: s }: { series: Series }) {
+  return (
+    <article
+      className={`card${s.category === "vertical" ? " card-vertical" : ""}`}
+    >
+      <Link
+        href={`/series/${encodeURIComponent(s.slug)}`}
+        className="card-main"
+        aria-label={`${s.title} — details`}
+      >
+        <div className="card-image">
+          <Artwork
+            src={s.poster_url}
+            title={s.title}
+            shape={s.category === "vertical" ? "vertical" : "poster"}
+          />
+          <span className="card-type">
+            {s.category === "vertical" ? "Vertical drama" : "Series"}
+          </span>
+          <span className="card-reveal" aria-hidden="true">
+            Discover the series ↗
+          </span>
+        </div>
+        <div className="card-body">
+          <h3>{s.title}</h3>
+          <p className="muted">
+            {[
+              s.episode_count != null ? `${s.episode_count} episodes` : null,
+              s.release_year,
+              s.language,
+            ]
+              .filter(Boolean)
+              .join(" · ") || "Series"}
+          </p>
+        </div>
+      </Link>
+      <div className="card-actions">
+        <Link href={`/series/${encodeURIComponent(s.slug)}`}>
+          Episodes <span aria-hidden="true">▷</span>
+        </Link>
+      </div>
+    </article>
+  );
+}
 export function Cards({ movies }: { movies: Movie[] }) {
   return (
     <div className="grid">
-      {movies.map((m) => (
-        <Link
-          className="card"
-          href={`/movies/${encodeURIComponent(m.slug)}`}
-          key={m.id}
-        >
-          {m.poster_url ? (
-            <img className="poster" src={m.poster_url} alt="" loading="lazy" />
-          ) : (
-            <div className="poster-placeholder">HL</div>
-          )}
-          <div className="card-body">
-            <h3>{m.title}</h3>
-            <p className="muted">
-              {m.release_year || "Movie"}
-              {m.duration_minutes ? ` · ${m.duration_minutes} min` : ""}
-            </p>
-          </div>
-        </Link>
+      {movies
+        .filter((m) => m.published !== false)
+        .map((m) => (
+          <MovieCard key={m.id} movie={m} />
+        ))}
+    </div>
+  );
+}
+export function SeriesCards({ series }: { series: Series[] }) {
+  return (
+    <div className="grid">
+      {series.map((s) => (
+        <SeriesCard key={s.id} series={s} />
       ))}
     </div>
   );
@@ -38,44 +115,15 @@ export function MovieRow({
   title: string;
   movies: Movie[];
 }) {
+  const rows = movies.filter((m) => m.published !== false);
   return (
-    <section className="rail">
-      <div className="rail-head">
-        <h2>{title}</h2>
-        <Link href="/movies">View all →</Link>
-      </div>
-      {movies.length ? (
-        <Cards movies={movies} />
+    <Rail title={title} href="/movies" empty={!rows.length}>
+      {rows.length ? (
+        rows.map((m) => <MovieCard key={m.id} movie={m} />)
       ) : (
-        <p className="muted">No titles available yet.</p>
+        <p className="muted">New stories will appear here when published.</p>
       )}
-    </section>
-  );
-}
-export function SeriesCards({ series }: { series: Series[] }) {
-  return (
-    <div className="grid">
-      {series.map((s) => (
-        <Link
-          className="card"
-          href={`/series/${encodeURIComponent(s.slug)}`}
-          key={s.id}
-        >
-          {s.poster_url ? (
-            <img className="poster" src={s.poster_url} alt="" loading="lazy" />
-          ) : (
-            <div className="poster-placeholder">HL</div>
-          )}
-          <div className="card-body">
-            <h3>{s.title}</h3>
-            <p className="muted">
-              {s.episode_count ? `${s.episode_count} episodes` : "Series"}
-              {s.language ? ` · ${s.language}` : ""}
-            </p>
-          </div>
-        </Link>
-      ))}
-    </div>
+    </Rail>
   );
 }
 export function SeriesRow({
@@ -86,28 +134,14 @@ export function SeriesRow({
   series: Series[];
 }) {
   return (
-    <section className="rail">
-      <div className="rail-head">
-        <h2>{title}</h2>
-        <Link href="/series">View all →</Link>
-      </div>
+    <Rail title={title} href="/series" empty={!series.length}>
       {series.length ? (
-        <SeriesCards series={series} />
+        series.map((s) => <SeriesCard key={s.id} series={s} />)
       ) : (
-        <p className="muted">No series available yet.</p>
+        <p className="muted">There are no published series here yet.</p>
       )}
-    </section>
+    </Rail>
   );
-}
-function percent(
-  position: number | null | undefined,
-  duration: number | null | undefined,
-  fallbackMinutes: number | null | undefined,
-): number {
-  const total =
-    duration && duration > 0 ? duration : fallbackMinutes ? fallbackMinutes * 60 : 0;
-  if (!position || !total || position <= 0) return 0;
-  return Math.min(100, Math.max(2, Math.round((position / total) * 100)));
 }
 export function ContinueWatchingRow({
   items,
@@ -115,97 +149,58 @@ export function ContinueWatchingRow({
   items: ContinueWatchingItem[];
 }) {
   return (
-    <section className="rail" aria-label="Continue watching">
-      <div className="rail-head">
-        <h2>Continue watching</h2>
-      </div>
-      <div className="grid">
-        {items.map((row) =>
-          isEpisodeRow(row) ? (
-            <Link
-              className="card"
-              key={`ep-${row.episode.id}`}
-              href={`/watch?episode=${row.episode.id}&series=${encodeURIComponent(row.series.slug)}&n=${row.episode.episode_number}`}
-            >
-              {row.episode.still_url ? (
-                <img
-                  className="poster"
-                  src={row.episode.still_url}
-                  alt=""
-                  loading="lazy"
-                />
-              ) : row.series.poster_url ? (
-                <img
-                  className="poster"
-                  src={row.series.poster_url}
-                  alt=""
-                  loading="lazy"
-                />
-              ) : (
-                <div className="poster-placeholder">HL</div>
+    <Rail title="Continue watching" label="Continue watching">
+      {items.map((row) => {
+        const ep = isEpisodeRow(row);
+        const title = ep ? row.series.title : row.title;
+        const subtitle = ep
+          ? `${row.episode.season_number != null ? `S${row.episode.season_number} · ` : ""}E${row.episode.episode_number}${row.episode.title ? ` · ${row.episode.title}` : ""}`
+          : "Movie";
+        const href = ep
+          ? `/watch?episode=${row.episode.id}&series=${encodeURIComponent(row.series.slug)}&n=${row.episode.episode_number}`
+          : `/watch?id=${row.id}`;
+        return (
+          <Link
+            key={`${ep ? "ep" : "mv"}-${row.id}`}
+            className="card continue-card"
+            href={href}
+          >
+            <Artwork
+              src={
+                ep
+                  ? row.episode.still_url || row.series.poster_url
+                  : row.backdrop_url || row.poster_url
+              }
+              title={title}
+              shape="landscape"
+            />
+            <Progress
+              position={row.position_seconds}
+              duration={
+                row.duration_seconds ||
+                (!ep && row.duration_minutes ? row.duration_minutes * 60 : null)
+              }
+              label={`${title} watch progress`}
+            />
+            <div className="card-body">
+              <span className="resume-icon" aria-hidden="true">
+                ▷
+              </span>
+              <h3>{title}</h3>
+              <p className="muted">{subtitle}</p>
+              {row.position_seconds != null && (
+                <small className="muted">
+                  Resume at {Math.floor(row.position_seconds / 60)}:
+                  {String(Math.floor(row.position_seconds % 60)).padStart(
+                    2,
+                    "0",
+                  )}
+                </small>
               )}
-              <div className="card-body">
-                <h3>{row.series.title}</h3>
-                <p className="muted">
-                  {row.episode.season_number
-                    ? `S${row.episode.season_number} `
-                    : ""}
-                  E{row.episode.episode_number}
-                  {row.episode.title ? ` · ${row.episode.title}` : ""}
-                </p>
-                {percent(row.position_seconds, row.duration_seconds, null) > 0 && (
-                  <div
-                    className="progress-track"
-                    role="progressbar"
-                    aria-valuenow={percent(row.position_seconds, row.duration_seconds, null)}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-label="Watch progress"
-                  >
-                    <i
-                      style={{
-                        width: `${percent(row.position_seconds, row.duration_seconds, null)}%`,
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            </Link>
-          ) : (
-            <Link
-              className="card"
-              key={`mv-${row.id}`}
-              href={`/watch?id=${row.id}`}
-            >
-              {row.poster_url ? (
-                <img className="poster" src={row.poster_url} alt="" loading="lazy" />
-              ) : (
-                <div className="poster-placeholder">HL</div>
-              )}
-              <div className="card-body">
-                <h3>{row.title}</h3>
-                <p className="muted">Movie{row.release_year ? ` · ${row.release_year}` : ""}</p>
-                {percent(row.position_seconds, row.duration_seconds, row.duration_minutes) > 0 && (
-                  <div
-                    className="progress-track"
-                    role="progressbar"
-                    aria-valuenow={percent(row.position_seconds, row.duration_seconds, row.duration_minutes)}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-label="Watch progress"
-                  >
-                    <i
-                      style={{
-                        width: `${percent(row.position_seconds, row.duration_seconds, row.duration_minutes)}%`,
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-            </Link>
-          ),
-        )}
-      </div>
-    </section>
+            </div>
+          </Link>
+        );
+      })}
+    </Rail>
   );
 }

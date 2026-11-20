@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Permission;
 use App\Models\Season;
+use App\Rules\DashManifestPath;
 use App\Rules\HlsManifestPath;
 use App\Rules\SafeStreamUrl;
 use App\Rules\YouTubeUrl;
@@ -65,6 +66,8 @@ class StoreEpisodeRequest extends FormRequest
 
             if ($kind === 'hls') {
                 $url[] = new HlsManifestPath;
+            } elseif ($kind === 'dash') {
+                $url[] = new DashManifestPath;
             } elseif ($kind === 'youtube') {
                 $url[] = new YouTubeUrl;
             }

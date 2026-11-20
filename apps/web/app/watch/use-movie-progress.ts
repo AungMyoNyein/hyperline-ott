@@ -6,6 +6,14 @@ export type ProgressOwner =
   | { kind: "movie"; id: string }
   | { kind: "episode"; id: string };
 
+// Native media and the official YouTube API adapter share one progress engine.
+export interface ProgressMedia extends EventTarget {
+  readonly readyState: number;
+  readonly duration: number;
+  currentTime: number;
+  readonly ended: boolean;
+}
+
 /**
  * Shared progress engine for movies and episodes. Behavior mirrors the Phase 1
  * movie contract exactly: owner-scoped resume lookup, restore after metadata
@@ -14,10 +22,11 @@ export type ProgressOwner =
  * cleanup, serialized requests with a queued latest forced snapshot.
  */
 export function useWatchProgress(
-  videoRef: RefObject<HTMLVideoElement | null>,
+  videoRef: RefObject<ProgressMedia | null>,
   owner: ProgressOwner | null,
   token: string,
   onError: (message: string) => void,
+  readySignal = 0,
 ) {
   const ownerId = owner?.id ?? "";
   const ownerKind = owner?.kind ?? "movie";
@@ -127,7 +136,7 @@ export function useWatchProgress(
       window.removeEventListener("pagehide", pause);
       document.removeEventListener("visibilitychange", hidden);
     };
-  }, [ownerId, ownerKind, token, videoRef, onError]);
+  }, [ownerId, ownerKind, token, videoRef, onError, readySignal]);
 }
 
 /** Phase 1 compatibility wrapper. */

@@ -62,7 +62,7 @@ class CheckPlayableOwnership extends Command
         $report['ok'] = $total === 0;
 
         if ($this->option('json')) {
-            $this->line(json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPES_SLASHES));
+            $this->line(json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         } else {
             foreach ($report['violations'] as $table => $entry) {
                 $this->line(is_array($entry)
