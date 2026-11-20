@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\PlaybackSession;
+use App\Rules\YouTubeUrl;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -60,11 +61,12 @@ class PlaybackSessionResource extends JsonResource
             'source' => $this->videoSource === null ? null : [
                 'label' => $this->videoSource->label,
                 'kind' => $this->videoSource->kind,
+                'video_id' => $this->when($this->videoSource->isEmbed(), fn () => YouTubeUrl::videoId($this->videoSource->url)),
                 'quality' => $this->videoSource->quality,
                 'language' => $this->videoSource->language,
             ],
 
-            'url' => $this->playbackUrl ?? $this->videoSource?->url,
+            'url' => $this->playbackUrl ?? ($this->videoSource?->isEmbed() ? YouTubeUrl::canonicalUrl($this->videoSource->url) : $this->videoSource?->url),
             'signature_required' => $this->playbackUrl !== null,
             'credentials_required' => $this->playbackCookie !== null,
             'renew_after_seconds' => $this->playbackUrl === null ? null : max(1, (int) floor(now()->diffInSeconds($this->expires_at, false) * 0.6)),

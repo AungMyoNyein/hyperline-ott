@@ -154,7 +154,9 @@ export default function MovieEditor({
           <h3>Video sources</h3>
           <p className="muted">
             HLS, MP4 and DASH streams plus YouTube links are supported. YouTube
-            sources play as embedded videos and are not signed.
+            sources use the official embedded player. Enter a YouTube video
+            link, an HTTPS .m3u8 playlist, or an HTTPS .mpd manifest. Protected
+            streams require configured authorization.
           </p>
           <FieldError name="sources" errors={errors} />
           {draft.sources.map((s, i) => (

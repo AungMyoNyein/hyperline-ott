@@ -27,6 +27,7 @@ export default async function Watch({
         </Link>
       </div>
       <Player
+        key={p.id ? `movie-${p.id}` : `episode-${p.episode}`}
         movieId={p.id || ""}
         episodeId={p.episode || ""}
         seriesSlug={p.series || ""}

@@ -3,6 +3,7 @@
 // 'local-youtube-pattern' (public YouTube link; only the embed is asserted,
 // never third-party playback).
 import { test, expect } from "../../apps/web/node_modules/@playwright/test";
+import { mockYouTube } from "./youtube-fixture";
 const web = "http://127.0.0.1:18082";
 async function signIn(
   page: import("../../apps/web/node_modules/@playwright/test").Page,
@@ -49,6 +50,7 @@ test("DASH sources play through dash.js with the signed-session transport", asyn
 test("YouTube sources render the embed player instead of the video element", async ({
   page,
 }) => {
+  await mockYouTube(page);
   await signIn(page, "viewer@hyperline.test");
   await openMovie(page, "Local YouTube pattern", "local-youtube-pattern");
   await page.getByRole("link", { name: /^(Watch now|Resume)$/ }).click();
@@ -57,7 +59,7 @@ test("YouTube sources render the embed player instead of the video element", asy
   await expect(frame).toBeVisible({ timeout: 15000 });
   await expect(frame).toHaveAttribute(
     "src",
-    /^https:\/\/www\.youtube\.com\/embed\/dQw4w9WgXcQ/,
+    /^https:\/\/www\.youtube\.com\/embed\/M7lc1UVf-VE/,
   );
   await expect(page.locator("video")).toBeHidden();
 });

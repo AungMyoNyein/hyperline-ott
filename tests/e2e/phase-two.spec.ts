@@ -119,12 +119,20 @@ test("admin creates a series with a season and episode in the CMS, publishes it,
   await epForm
     .getByLabel("Episode title", { exact: true })
     .fill("Phase two pilot");
+  await epForm.getByLabel("Format", { exact: true }).selectOption("youtube");
   await epForm
     .getByLabel("HTTPS stream URL", { exact: true })
-    .fill("https://cdn.example.test/phase-two/pilot.m3u8");
+    .fill("https://youtu.be/M7lc1UVf-VE?si=fixture");
+  const savedEpisode = page.waitForResponse(
+    (r) => r.request().method() === "POST" && /\/episodes$/.test(r.url()),
+  );
   await epForm
     .getByRole("button", { name: "Save episode", exact: true })
     .click();
+  const savedSource = (await (await savedEpisode).json()).data.episodes[0]
+    .sources[0];
+  expect(savedSource.kind).toBe("youtube");
+  expect(savedSource.url).toBe("https://www.youtube.com/watch?v=M7lc1UVf-VE");
   await expect(
     page.getByRole("status").filter({ hasText: "Episode saved" }),
   ).toBeVisible();

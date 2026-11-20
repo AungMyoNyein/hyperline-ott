@@ -6,37 +6,15 @@ import type { MediaPlayerClass } from "dashjs";
 import { api, ApiError, errorText, Series } from "../../lib/api";
 import { useWatchProgress } from "./use-movie-progress";
 import { useSession } from "../session";
+import YouTube from "./youtube-player";
 type Playback = {
   url: string;
   session_id: string;
   expires_at: string;
-  source: { kind: string } | null;
+  source: { kind: string; video_id?: string } | null;
   credentials_required?: boolean;
   renew_after_seconds?: number | null;
 };
-/**
- * Converts an administrator-entered YouTube link (watch/short/embed/youtu.be)
- * into the privacy-moderate embed URL. Falls back to the raw URL, which the
- * iframe will refuse visibly rather than silently playing the wrong video.
- */
-function toYouTubeEmbed(raw: string): string {
-  try {
-    const u = new URL(raw);
-    const host = u.hostname.replace(/^www\./, "");
-    let id: string | null = null;
-    if (host === "youtu.be") id = u.pathname.slice(1).split("/")[0] || null;
-    else if (host.endsWith("youtube.com")) {
-      const m = u.pathname.match(/^\/(embed|shorts|live)\/([^/?#]+)/);
-      if (m) id = m[2];
-      else if (u.pathname.startsWith("/watch")) id = u.searchParams.get("v");
-    }
-    if (id && /^[A-Za-z0-9_-]{11}$/.test(id))
-      return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`;
-  } catch {
-    /* fall through */
-  }
-  return raw;
-}
 export default function Player({
   movieId,
   episodeId,
@@ -58,7 +36,8 @@ export default function Player({
   const [controlNotice, setControlNotice] = useState("");
   const [progressNotice, setProgressNotice] = useState("");
   const [retry, setRetry] = useState(0);
-  const [youtubeSrc, setYoutubeSrc] = useState<string | null>(null);
+  const [youtubeId, setYoutubeId] = useState<string | null>(null);
+  const [nativeReady, setNativeReady] = useState(false);
   const [levels, setLevels] = useState<{ height: number; bitrate: number }[]>(
     [],
   );
@@ -84,11 +63,13 @@ export default function Player({
   const vertical = series?.category === "vertical";
   useWatchProgress(
     videoRef,
-    isMovie
-      ? { kind: "movie", id: movieId }
-      : isEpisode
-        ? { kind: "episode", id: episodeId || "" }
-        : null,
+    !nativeReady
+      ? null
+      : isMovie
+        ? { kind: "movie", id: movieId }
+        : isEpisode
+          ? { kind: "episode", id: episodeId || "" }
+          : null,
     token,
     setProgressNotice,
   );
@@ -118,7 +99,8 @@ export default function Player({
     setProgressNotice("");
     setLevels([]);
     setQuality(-1);
-    setYoutubeSrc(null);
+    setYoutubeId(null);
+    setNativeReady(false);
     const timeout = window.setTimeout(() => {
       if (!disposed) {
         setLoading(false);
@@ -163,12 +145,14 @@ export default function Player({
         )
           throw new Error("The playback URL is not secure.");
         if (playback.source?.kind === "youtube") {
-          // Public embed: no signed renewal (the API returns renew_after=null),
-          // no video element, and therefore no position reporting.
+          const id = playback.source.video_id;
+          if (!id || !/^[A-Za-z0-9_-]{11}$/.test(id))
+            throw new Error("This YouTube video link is invalid.");
           ready();
-          setYoutubeSrc(toYouTubeEmbed(playback.url));
+          setYoutubeId(id);
           return;
         }
+        setNativeReady(true);
         video.crossOrigin = playback.credentials_required
           ? "use-credentials"
           : "anonymous";
@@ -399,21 +383,21 @@ export default function Player({
         </p>
       )}
       <div
-        className={`player${vertical ? " player-vertical" : ""}`}
+        className={`player${vertical ? " player-vertical" : ""}${youtubeId ? " player-youtube" : ""}`}
         ref={containerRef}
       >
-        {youtubeSrc && (
-          <iframe
-            src={youtubeSrc}
-            title="YouTube player"
-            allow="accelerometer; autoplay; encrypted-media; picture-in-picture; web-share"
-            allowFullScreen
-            style={{
-              width: "100%",
-              aspectRatio: "16 / 9",
-              border: 0,
-              display: "block",
-            }}
+        {youtubeId && !error && (
+          <YouTube
+            key={`${isMovie ? "movie" : "episode"}-${isMovie ? movieId : episodeId}`}
+            videoId={youtubeId}
+            owner={
+              isMovie
+                ? { kind: "movie", id: movieId }
+                : { kind: "episode", id: episodeId || "" }
+            }
+            token={token}
+            onError={setError}
+            onNotice={setProgressNotice}
           />
         )}
         <video
@@ -423,7 +407,7 @@ export default function Player({
           preload="metadata"
           crossOrigin="anonymous"
           aria-label={isEpisode ? "Episode player" : "Movie player"}
-          style={youtubeSrc || error ? { display: "none" } : undefined}
+          style={youtubeId || error ? { display: "none" } : undefined}
         />
         {error && (
           <div className="player-status player-unavailable">
@@ -432,7 +416,7 @@ export default function Player({
             <p>Please try again, or explore another title.</p>
           </div>
         )}
-        {loading && !youtubeSrc && (
+        {loading && !youtubeId && (
           <p className="player-status" role="status">
             Loading stream…
           </p>

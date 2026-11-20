@@ -982,9 +982,11 @@ export default function SeriesLibrary({ token }: Props) {
                             <h5>Video sources</h5>
                             <p className="muted">
                               HLS, MP4 and DASH streams plus YouTube links are
-                              supported. YouTube sources play as embedded videos
-                              and are not signed. Saving replaces the full
-                              source list.
+                              supported. YouTube links are normalized and use
+                              the official player. HLS requires HTTPS .m3u8;
+                              DASH requires HTTPS .mpd. Protected streams
+                              require configured authorization. Saving replaces
+                              the full source list.
                             </p>
                             <FieldError name="sources" errors={fieldErrors} />
                             {episodeForm.draft.sources.map((src, i) => (
