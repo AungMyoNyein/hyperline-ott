@@ -123,7 +123,12 @@ export default function MovieLibrary({
           <article key={m.id} className="library-row" role="row">
             <div role="cell" className="library-art">
               {m.poster_url ? (
-                <img src={m.poster_url} alt="" loading="lazy" />
+                <img
+                  src={m.poster_url}
+                  alt=""
+                  loading="lazy"
+                  style={m.youtube ? { objectFit: "contain" } : undefined}
+                />
               ) : (
                 <span className="library-art-fallback" aria-hidden="true">
                   HL
@@ -132,6 +137,15 @@ export default function MovieLibrary({
             </div>
             <div role="cell" className="library-title-cell">
               <h3>{m.title}</h3>
+              {m.youtube && (
+                <p className="muted">
+                  YouTube
+                  {m.youtube.channel_name ? ` · ${m.youtube.channel_name}` : ""}
+                  {m.youtube.youtube_title
+                    ? ` — ${m.youtube.youtube_title}`
+                    : ""}
+                </p>
+              )}
               <p className="muted">
                 {m.release_year || "Movie"}
                 {m.duration_minutes ? ` · ${m.duration_minutes} min` : ""}

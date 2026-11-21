@@ -52,6 +52,9 @@ rm -f "$DB_DATABASE"
 touch "$DB_DATABASE"
 (cd services/api && php artisan migrate --force)
 php tests/fixtures/seed.php
+if [ -n "${HYPERLINE_CATALOG_CSV:-}" ]; then
+    php tests/fixtures/catalog-import.php
+fi
 mkdir -p /tmp/hyperline-test-media
 for variant in low high; do
     if [ "$variant" = low ]; then size=320x180; else size=640x360; fi

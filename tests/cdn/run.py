@@ -33,7 +33,8 @@ media = work/'media'
 media.mkdir()
 secret = secrets.token_hex(32)
 env = {**os.environ, 'APP_ENV':'testing','APP_KEY':'base64:'+base64.b64encode(secrets.token_bytes(32)).decode(),
-       'APP_URL':'https://api.hyperline.test:18443','DB_CONNECTION':'sqlite','DB_DATABASE':'/tmp/hyperline-cdn-browser.sqlite',
+       'APP_URL':'https://api.hyperline.test:18443','DB_CONNECTION':'sqlite','DB_DATABASE':str(work/'catalog.sqlite'),
+       'DB_URL':'','APP_CONFIG_CACHE':str(work/'config.php'),
        'CACHE_STORE':'array','SESSION_DRIVER':'array','QUEUE_CONNECTION':'sync','TRUSTED_PROXIES':'127.0.0.1',
        'OTT_SIGNED_URLS':'true','OTT_PLAYBACK_SIGNER':r'App\Support\Playback\NginxSecureLinkSigner',
        'OTT_NGINX_CDN_VERIFIED':'true','OTT_NGINX_CDN_URL':'https://cdn.hyperline.test:18443',

@@ -17,6 +17,7 @@ class AdminMovieResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'youtube' => $this->youtubeAttribution(),
             'slug' => $this->slug,
             'synopsis' => $this->synopsis,
             'release_year' => $this->release_year,

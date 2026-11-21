@@ -5,6 +5,7 @@ import { api, errorText, Movie, ProgressRow } from "../../../lib/api";
 import { useSession } from "../../session";
 import Artwork from "../../components/artwork";
 import { ErrorState, Skeleton } from "../../components/ui";
+import YouTubeAttributionView from "../../components/youtube-attribution";
 export default function Detail({ slug }: { slug: string }) {
   const { token } = useSession();
   const [position, setPosition] = useState(0);
@@ -78,6 +79,7 @@ export default function Detail({ slug }: { slug: string }) {
                 {movie.featured ? "FEATURED MOVIE" : "HYPERLINE MOVIES"}
               </p>
               <h1>{movie.title}</h1>
+              <YouTubeAttributionView attribution={movie.youtube} />
               <p className="muted">
                 {movie.release_year}{" "}
                 {movie.duration_minutes

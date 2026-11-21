@@ -15,6 +15,11 @@ export type Source = {
   enabled?: boolean;
 };
 export type Movie = {
+  youtube?: {
+    platform: "YouTube";
+    channel_name?: string;
+    youtube_title?: string;
+  } | null;
   id: number;
   title: string;
   slug: string;
