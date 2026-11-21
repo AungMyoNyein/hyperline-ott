@@ -4,6 +4,14 @@ export type Genre = {
   slug: string;
   movies_count?: number;
 };
+export type YouTubeAttribution = {
+  platform: "YouTube";
+  channel_name?: string;
+  channel_url?: string;
+  youtube_title?: string;
+  video_kind?: string;
+  playlist_url?: string | null;
+};
 export type Source = {
   label: string;
   kind: "hls" | "dash" | "mp4" | "youtube";
@@ -14,6 +22,7 @@ export type Source = {
   enabled?: boolean;
 };
 export type Movie = {
+  youtube?: YouTubeAttribution | null;
   id: number;
   title: string;
   slug: string;
@@ -29,6 +38,7 @@ export type Movie = {
   sources?: Source[];
 };
 export type Episode = {
+  youtube?: YouTubeAttribution | null;
   id: number;
   season_id?: number | null;
   season_number?: number | null;
@@ -116,7 +126,12 @@ export type ProgressRow = {
     title: string | null;
     duration_seconds: number | null;
     still_url: string | null;
-    series: { id: number; slug: string; title: string; poster_url: string | null };
+    series: {
+      id: number;
+      slug: string;
+      title: string;
+      poster_url: string | null;
+    };
   };
   position_seconds: number;
   duration_seconds: number | null;

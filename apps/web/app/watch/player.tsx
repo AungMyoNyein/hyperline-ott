@@ -7,11 +7,17 @@ import { api, ApiError, errorText, Series } from "../../lib/api";
 import { useWatchProgress } from "./use-movie-progress";
 import { useSession } from "../session";
 import YouTube from "./youtube-player";
+import YouTubeAttributionView from "../components/youtube-attribution";
+import type { YouTubeAttribution } from "../../lib/api";
 type Playback = {
   url: string;
   session_id: string;
   expires_at: string;
-  source: { kind: string; video_id?: string } | null;
+  source: {
+    kind: string;
+    video_id?: string;
+    attribution?: YouTubeAttribution;
+  } | null;
   credentials_required?: boolean;
   renew_after_seconds?: number | null;
 };
@@ -37,6 +43,8 @@ export default function Player({
   const [progressNotice, setProgressNotice] = useState("");
   const [retry, setRetry] = useState(0);
   const [youtubeId, setYoutubeId] = useState<string | null>(null);
+  const [youtubeAttribution, setYoutubeAttribution] =
+    useState<YouTubeAttribution | null>(null);
   const [nativeReady, setNativeReady] = useState(false);
   const [levels, setLevels] = useState<{ height: number; bitrate: number }[]>(
     [],
@@ -100,6 +108,7 @@ export default function Player({
     setLevels([]);
     setQuality(-1);
     setYoutubeId(null);
+    setYoutubeAttribution(null);
     setNativeReady(false);
     const timeout = window.setTimeout(() => {
       if (!disposed) {
@@ -150,6 +159,9 @@ export default function Player({
             throw new Error("This YouTube video link is invalid.");
           ready();
           setYoutubeId(id);
+          setYoutubeAttribution(
+            playback.source.attribution || { platform: "YouTube" },
+          );
           return;
         }
         setNativeReady(true);
@@ -422,6 +434,7 @@ export default function Player({
           </p>
         )}
       </div>
+      {youtubeId && <YouTubeAttributionView attribution={youtubeAttribution} />}
       <div className="player-tools">
         <button
           className="secondary"

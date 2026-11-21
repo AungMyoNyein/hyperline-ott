@@ -247,6 +247,13 @@ test("YouTube episode switching cleans players, scopes progress, fits mobile and
     .locator(".card")
     .filter({ hasText: "YouTube sample series" })
     .click();
+  // The iframe may be visible before onReady installs the progress adapter.
+  // Wait for this owner's initial resume lookup before seeking/pausing it.
+  const initialProgress = page.waitForResponse(
+    (r) =>
+      r.request().method() === "GET" &&
+      r.url().includes("/watch-progress?episode_id="),
+  );
   await page
     .locator(".episodes li")
     .first()
@@ -254,6 +261,7 @@ test("YouTube episode switching cleans players, scopes progress, fits mobile and
     .click();
   const frame = page.locator('iframe[title="YouTube player"]');
   await expect(frame).toBeVisible();
+  await (await initialProgress).finished();
   const episode1 = new URL(page.url()).searchParams.get("episode");
   const saved = progressPost(page);
   await youtubeAction(page, "seekTo", 42);

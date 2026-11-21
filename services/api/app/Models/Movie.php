@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasYouTubeCatalogAttribution;
 use Database\Factories\MovieFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,8 @@ class Movie extends Model
 {
     /** @use HasFactory<MovieFactory> */
     use HasFactory;
+
+    use HasYouTubeCatalogAttribution;
 
     protected $fillable = [
         'title',

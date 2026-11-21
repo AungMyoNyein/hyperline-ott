@@ -20,6 +20,11 @@ function Preview({
             alt={`${label} preview`}
             loading="lazy"
             referrerPolicy="no-referrer"
+            style={
+              /^https:\/\/i\.ytimg\.com\//.test(url)
+                ? { objectFit: "contain" }
+                : undefined
+            }
             onError={() => setFailed(url)}
           />
         ) : (

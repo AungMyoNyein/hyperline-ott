@@ -3,6 +3,7 @@ import { ContinueWatchingItem, isEpisodeRow, Movie, Series } from "../lib/api";
 import Artwork from "./components/artwork";
 import Rail from "./components/rail";
 import { Progress } from "./components/ui";
+import YouTubeAttributionView from "./components/youtube-attribution";
 function MovieCard({ movie: m }: { movie: Movie }) {
   return (
     <article className="card">
@@ -20,6 +21,7 @@ function MovieCard({ movie: m }: { movie: Movie }) {
         </div>
         <div className="card-body">
           <h3>{m.title}</h3>
+          <YouTubeAttributionView attribution={m.youtube} compact />
           <p className="muted">
             {[
               m.release_year,

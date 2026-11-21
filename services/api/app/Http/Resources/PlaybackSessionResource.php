@@ -61,6 +61,7 @@ class PlaybackSessionResource extends JsonResource
             'source' => $this->videoSource === null ? null : [
                 'label' => $this->videoSource->label,
                 'kind' => $this->videoSource->kind,
+                'attribution' => $this->when($this->videoSource->isEmbed(), fn () => ($this->episode ?? $this->movie)?->youtubeAttribution($this->videoSource)),
                 'video_id' => $this->when($this->videoSource->isEmbed(), fn () => YouTubeUrl::videoId($this->videoSource->url)),
                 'quality' => $this->videoSource->quality,
                 'language' => $this->videoSource->language,

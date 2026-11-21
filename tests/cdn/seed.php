@@ -1,6 +1,6 @@
 <?php
 require __DIR__.'/../../services/api/vendor/autoload.php';
-if (getenv('DB_DATABASE') !== '/tmp/hyperline-cdn-browser.sqlite' || getenv('APP_ENV') !== 'testing') {
+if (!str_starts_with((string) getenv('DB_DATABASE'), '/tmp/hyperline-cdn-') || getenv('APP_ENV') !== 'testing') {
     throw new RuntimeException('Dedicated CDN test database required.');
 }
 $app = require __DIR__.'/../../services/api/bootstrap/app.php';

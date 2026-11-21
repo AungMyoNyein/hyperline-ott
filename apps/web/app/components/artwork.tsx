@@ -17,7 +17,12 @@ export default function Artwork({
   const [failed, setFailed] = useState("");
   const safe = !!src && /^(https?:\/\/|\/(?!\/))/.test(src);
   return (
-    <div className={`artwork artwork-${shape}`}>
+    <div
+      className={`artwork artwork-${shape}`}
+      data-youtube-thumbnail={
+        !!src && /^https:\/\/i\.ytimg\.com\//.test(src) ? "true" : undefined
+      }
+    >
       {safe && failed !== src ? (
         <Image
           key={src}

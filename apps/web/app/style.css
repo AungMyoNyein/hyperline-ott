@@ -1575,3 +1575,13 @@ footer.site {
   min-height: 200px;
   border: 0;
 }
+/* Preserve the entire remote YouTube thumbnail; never crop/proxy its content. */
+.artwork[data-youtube-thumbnail="true"] img {
+  object-fit: contain;
+}
+.youtube-attribution {
+  overflow-wrap: anywhere;
+  margin-block: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}

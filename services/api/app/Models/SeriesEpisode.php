@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasYouTubeCatalogAttribution;
 use Database\Factories\SeriesEpisodeFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +14,8 @@ class SeriesEpisode extends Model
 {
     /** @use HasFactory<SeriesEpisodeFactory> */
     use HasFactory;
+
+    use HasYouTubeCatalogAttribution;
 
     protected $table = 'series_episodes';
 
