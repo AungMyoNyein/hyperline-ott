@@ -364,7 +364,10 @@ test("authenticated player fails closed without fetching media; seasons and sear
   await fixtures(page);
   await login(page);
   await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
-  await page.getByRole("link", { name: "More info", exact: true }).click();
+  await page
+    .locator(".hero")
+    .getByRole("link", { name: "Details", exact: true })
+    .click();
   await page.waitForURL(`${web}/movies/${movie.slug}`);
   await expect(
     page.getByRole("heading", { name: movie.title, exact: true }),

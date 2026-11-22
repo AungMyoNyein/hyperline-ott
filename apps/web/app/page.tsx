@@ -114,7 +114,7 @@ export default function HomePage() {
                       : "/movies"
                   }
                 >
-                  {hero ? "More info" : "Explore movies"}{" "}
+                  {hero ? "Details" : "Explore movies"}{" "}
                   <span aria-hidden="true">↗</span>
                 </Link>
                 {!hero && (
@@ -148,14 +148,14 @@ export default function HomePage() {
               "featured",
             ]
           ).map((section) => {
-            // Avoid repeating a complete row when the small catalog is identical.
-            const signature = (movies: Movie[]) =>
-              movies
-                .map((m) => m.id)
-                .sort((a, b) => a - b)
-                .join(",");
-            const duplicate = (movies: Movie[], prior: Movie[][]) =>
-              prior.some((row) => signature(row) === signature(movies));
+            // Hide any row fully covered by earlier movie rows, including
+            // featured subsets in a small catalog. Keep partially new rows.
+            const duplicate = (movies: Movie[], prior: Movie[][]) => {
+              const seen = new Set(
+                prior.flatMap((row) => row.map((m) => m.id)),
+              );
+              return movies.every((movie) => seen.has(movie.id));
+            };
             const order = data.section_order || [
               "continue",
               "trending",
@@ -179,7 +179,8 @@ export default function HomePage() {
                 .slice(0, order.indexOf(section))
                 .filter((key) => movieRows[key])
                 .map((key) => movieRows[key].movies);
-              return duplicate(row.movies, prior) ? null : (
+              return !row.movies.length ||
+                duplicate(row.movies, prior) ? null : (
                 <MovieRow key={section} title={row.title} movies={row.movies} />
               );
             }
@@ -217,16 +218,18 @@ export default function HomePage() {
                   </div>
                 </section>
               ) : null;
-            if (section === "series")
-              return (
+            if (section === "series") {
+              const series = (data.series || []).filter(
+                (s) => s.category !== "vertical",
+              );
+              return series.length ? (
                 <SeriesRow
                   key={section}
                   title="Discover series"
-                  series={(data.series || []).filter(
-                    (s) => s.category !== "vertical",
-                  )}
+                  series={series}
                 />
-              );
+              ) : null;
+            }
             if (section === "vertical")
               return vertical.length ? (
                 <SeriesRow

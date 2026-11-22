@@ -262,3 +262,42 @@ test("mixed artwork reserves its dimensions while images load or fail", async ({
   const after = await page.locator(".card-image").nth(1).boundingBox();
   expect(after).toEqual(before);
 });
+
+test("small catalogs hide covered featured rows and empty series sections", async ({
+  page,
+}) => {
+  await fixtures(page);
+  await page.route("**/api/v1/home", (route) =>
+    route.fulfill({
+      json: {
+        data: {
+          hero: movie,
+          trending: rows,
+          latest: rows,
+          featured: [rows[0]],
+          series: [],
+          continue_watching: [],
+        },
+      },
+    }),
+  );
+  await page.goto(web);
+  await expect(
+    page.getByRole("heading", { name: "Trending now", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Latest movies", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Featured movies", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Discover series", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Vertical dramas", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.locator(".hero").getByRole("link", { name: "Details", exact: true }),
+  ).toBeVisible();
+});

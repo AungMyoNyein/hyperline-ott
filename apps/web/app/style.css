@@ -1811,7 +1811,7 @@ footer.site {
 }
 
 .genre-discovery {
-  padding: 1.5rem var(--page-gutter, 4%);
+  padding: 1.5rem 0;
 }
 .genre-links {
   display: flex;
