@@ -49,6 +49,11 @@ for (const width of [360, 390, 768, 1366, 1920]) {
         .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
         .analyze();
       expect(result.violations).toEqual([]);
+      await page.evaluate(() => {
+        if (document.activeElement instanceof HTMLElement)
+          document.activeElement.blur();
+        window.scrollTo({ top: 0, behavior: "instant" });
+      });
       await page.screenshot({
         path: resolve(shots, `${name}-${width}.png`),
         fullPage: true,
@@ -120,6 +125,13 @@ for (const width of [360, 390, 768, 1366, 1920]) {
         exact: true,
       }),
     ).toBeVisible();
+    await expect
+      .poll(() =>
+        manager
+          .getByLabel("Find genres", { exact: true })
+          .evaluate((el) => getComputedStyle(el).fontFamily),
+      )
+      .toContain("myanmar");
     await capture("cms-genres");
     await manager
       .getByRole("button", { name: `Edit Browser genre ${width}`, exact: true })

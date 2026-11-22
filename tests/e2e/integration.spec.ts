@@ -98,7 +98,7 @@ test("public catalog filters and detail show published content, and mobile layou
 }) => {
   await page.goto(web);
   await expect(
-    page.getByRole("heading", { name: "Featured movies" }),
+    page.getByRole("heading", { name: "Trending now" }),
   ).toBeVisible();
   await expect(page.locator("main")).toContainText("Local test pattern");
   await expect(page.locator("main")).not.toContainText("Hidden test draft");

@@ -53,7 +53,12 @@ try:
     before = fingerprint()
     applied_before = int(sql('SELECT count(*) FROM migrations'))
     image = run(['docker','inspect','--format','{{.Image}}','hyperline-api-1']).decode().strip()
-    command = ['docker','run','--rm','--network','container:'+name,'--mount',f'type=bind,src={ROOT}/services/api,dst=/app,readonly','--workdir','/app','--entrypoint','php']
+    candidate_image = os.environ.get('HYPERLINE_GENRE_API_IMAGE')
+    if candidate_image:
+        image = candidate_image
+        command = ['docker','run','--rm','--network','container:'+name,'--workdir','/var/www/html','--entrypoint','php']
+    else:
+        command = ['docker','run','--rm','--network','container:'+name,'--mount',f'type=bind,src={ROOT}/services/api,dst=/app,readonly','--workdir','/app','--entrypoint','php']
     variables = {'APP_ENV':'testing','DB_CONNECTION':'pgsql','DB_HOST':'127.0.0.1','DB_PORT':'5432','DB_DATABASE':'fixture','DB_USERNAME':'fixture','DB_PASSWORD':password,'DB_URL':'','APP_CONFIG_CACHE':'/tmp/genre-config.php','APP_SERVICES_CACHE':'/tmp/genre-services.php','APP_PACKAGES_CACHE':'/tmp/genre-packages.php','CACHE_STORE':'array','SESSION_DRIVER':'array','QUEUE_CONNECTION':'sync','APP_KEY':'base64:'+__import__('base64').b64encode(secrets.token_bytes(32)).decode()}
     env = dict(os.environ, **variables)
     for key in variables:
@@ -69,7 +74,7 @@ try:
     first_count = sql('SELECT count(*) FROM genres')
     run(command + [image,'artisan','ott:seed-suggested-genres','--no-ansi'],env=env)
     assert sql('SELECT count(*) FROM genres') == first_count
-    report = {'passed':True,'postgres':'16-alpine','isolation':'network none; tmpfs database; API shares only disposable network namespace','applied_before':applied_before,'applied_after':applied_before+1,'existing_records_preserved':before==after,'fingerprinted_tables':list(before),'optional_seed_idempotent':True,'snapshot_sha256':hashlib.sha256(snapshot.read_bytes()).hexdigest(),'private_snapshot':str(snapshot),'migration_output':log,'live_migrations_run':False}
+    report = {'passed':True,'candidate_api_image':candidate_image,'postgres':'16-alpine','isolation':'network none; tmpfs database; API shares only disposable network namespace','applied_before':applied_before,'applied_after':applied_before+1,'existing_records_preserved':before==after,'fingerprinted_tables':list(before),'optional_seed_idempotent':True,'snapshot_sha256':hashlib.sha256(snapshot.read_bytes()).hexdigest(),'private_snapshot':str(snapshot),'migration_output':log,'live_migrations_run':False}
     REPORT.write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({k:v for k,v in report.items() if k not in ['private_snapshot','migration_output']}))
 finally:

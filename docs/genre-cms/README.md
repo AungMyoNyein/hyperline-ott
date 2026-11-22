@@ -8,7 +8,7 @@ The base already had the approximately 460px Spotlight, eligible featured backdr
 
 Missing genre administration is now implemented using the existing `genres`, `movie_genre` and `series_genre` tables. Genre administration supports English `name` (also returned as `name_en`), optional Myanmar `name_my`, a unique lowercase hyphenated slug, enabled state, sort order, all-content movie/series counts, audited create/edit/delete and assignment-aware deletion refusal. Disabling removes a genre from public discovery and search suggestions while preserving assignments and existing catalog URLs. Movie/series resources retain editorial genre labels, including disabled assignments. Both assignment transactions lock selected genre rows to serialize with deletion and reject a genre removed after validation.
 
-The public homepage previously repeated identical movie sets and displayed a vertical promotion without any vertical catalog. It now suppresses repeated complete movie rows, omits empty vertical promotion, and includes real enabled-genre discovery links/counts. Dashboard administrators can reorder the seven existing section types; empty sections remain hidden. The featured toggle stays in the movie editor. No content is promoted, published or assigned automatically.
+The public homepage previously repeated identical movie sets and displayed a vertical promotion without any vertical catalog. It now suppresses movie rows whose titles are all already shown, including featured subsets, omits empty vertical promotion, and includes real enabled-genre discovery links/counts. Dashboard administrators can reorder the seven existing section types; empty sections remain hidden. The featured toggle stays in the movie editor. No content is promoted, published or assigned automatically.
 
 Content Studio now has Dashboard, Movies, Series & episodes, Genres, Artwork, Video Sources, Content QA and Audit & activity. Genre management has bilingual search, CRUD, enable/disable, sort order and safe deletion. Series editors expose the existing multi-genre API instead of silently omitting assignments. Existing season/episode managers and ordering are retained. Artwork previews report natural image dimensions, aspect mismatch and low resolution without replacing any URL. The focused Artwork, Sources and QA panels page through real movie records and open their existing editors; episode artwork/sources remain in the series manager. The CMS uses the same licensed self-hosted Noto Sans Myanmar files and `lang="my"` for added Myanmar text.
 
@@ -51,3 +51,32 @@ See [UAT-PROCEDURE.md](UAT-PROCEDURE.md) for the separately authorized activatio
 ## Limits
 
 Automated browser coverage uses Chromium and deterministic local media/YouTube API fixtures. Native HLS on Safari/iOS, physical devices, live third-party YouTube playback, real CDN authorization and a Burmese reader's typography acceptance require separate manual checks. Existing optional tests skip without their specific CDN/live YouTube/import CSV fixtures. Automated axe checks do not replace screen-reader usability review. Artwork checks are advisory because legitimate thumbnails and portrait/landscape sources vary; original URLs are never rewritten by CMS checks. Focused QA/artwork/source review panels currently cover movies; episodes use the existing series manager. The additive migration must be applied before new API code serves requests.
+
+
+## Immutable image packet
+
+Final application source: `fe227e952d90c3fec33135d17a370c65f76d44b8`. API/CMS trees are unchanged from `391916b4f964b23e82b9eb91ef31551f7ff79686`; their validated images are retained. Per-image source commits and Git tree IDs are in the manifest.
+
+| Service | Immutable Docker image ID |
+| --- | --- |
+| API / worker / scheduler | `sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6` |
+| Web | `sha256:b034610479a96457a220619e468223786a90cf900dbcb80125cd8cddfd62dff2` |
+| CMS | `sha256:a5a503f06f212b6e189f1d8e37d7567320485f784999b1d79797cf462b16e54e` |
+
+The final source archive SHA-256 is `dbbe6a1604a1cd4568a829a69e27eff83566598a6fce0981d69a05c375d53355`. The Web refinement reuses the verified prior candidate dependency layer only after package and lockfile equality checks, overlays the complete committed Web source, and runs a production rebuild. No dependencies are installed during refinement. Application checksums are in [source-files.sha256](source-files.sha256). The complete [release manifest](release-manifest.json) records prior images and runtime identities, and scoped [candidate](candidate.compose.json) and [rollback](rollback.compose.json) overrides are provided. Build output is retained in the three `*-production-build.txt` files. API restore validation was repeated using the actual candidate API image, and the image successfully lists its routes as `www-data`.
+
+After image preparation this host has approximately **1.0 GiB free (99% used)**. Review capacity before activation and any image export; shared images, existing backups and volumes were not pruned or removed. The images are prepared locally and have not been published to a registry or activated.
+
+
+## Final results
+
+- Laravel: **309 tests, 1,517 assertions passed** against disposable SQLite, including genre CRUD, authorization, bilingual discovery, assignments, deletion guards and seeding safety.
+- Complete existing browser regression plus the new small-catalog case: **64 passed, 3 skipped, 0 failed**, without snapshot updates. The three skips require optional external CDN, live YouTube and import-CSV fixtures. All player/auth/search/CMS workflows passed.
+- Final immutable Web and CMS images: **5 tests passed**, covering **40 page-level WCAG 2 A/AA and 2.1 AA axe scans with zero violations** across all requested sizes. The screenshots in [SCREENSHOTS.md](SCREENSHOTS.md) come from these actual images, using only disposable API fixtures. All 40 hashes are in [screenshots.sha256](screenshots.sha256).
+- Next.js TypeScript, configured TypeScript/Prettier lint, browser-test TypeScript and production builds passed. npm Web/CMS and Composer audits reported zero vulnerabilities.
+- Actual API image migration/optional-seed restore checks passed on PostgreSQL 16, preserving all original data and relationships. API route boot as `www-data` passed.
+- Final read-only UAT verification: **all eight original container IDs, images and start times unchanged; 13 migrations; no new genre columns or homepage table**. Candidate containers were removed. No UAT migration or activation ran.
+
+See [validation-results.json](validation-results.json), [browser-regression.txt](browser-regression.txt), [image-smoke.json](image-smoke.json), [image-smoke.txt](image-smoke.txt), [prebuilt-validation.json](prebuilt-validation.json) and [uat-final-readonly.json](uat-final-readonly.json). Production builds were reused only after byte comparison of 68 application source/configuration files. Intentional visual changes were refreshed separately and then passed clean comparisons. Final Web corrections hide covered featured subsets and empty series sections, use the existing page gutter, and label the hero details action “Details”.
+
+**Validated candidate prepared for scoped UAT review; not deployed.** Capacity review and the manual device/CDN/language checks listed above remain before activation. API/worker/scheduler must become healthy before the new CMS is activated; application rollback restores the older clients first and retains the additive schema.

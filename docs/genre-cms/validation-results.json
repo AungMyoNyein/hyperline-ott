@@ -1,0 +1,41 @@
+{
+  "application_source_commit": "fe227e952d90c3fec33135d17a370c65f76d44b8",
+  "laravel": {
+    "passed": 309,
+    "assertions": 1517
+  },
+  "browser_regression": {
+    "passed": 64,
+    "skipped": 3,
+    "failed": 0
+  },
+  "actual_image_cms_browser_tests": {
+    "passed": 5,
+    "axe_page_scans": 40,
+    "axe_violations": 0
+  },
+  "unique_browser_tests_passed": 69,
+  "screenshots": 40,
+  "viewports": [
+    360,
+    390,
+    768,
+    1366,
+    1920
+  ],
+  "typescript": "passed",
+  "configured_lint": "passed",
+  "production_builds": "passed",
+  "dependency_audits": {
+    "npm_web": 0,
+    "npm_cms": 0,
+    "composer": 0
+  },
+  "restored_postgresql_migration": "passed; 25 original tables preserved",
+  "api_worker_scheduler_image_match": true,
+  "uat_runtime_unchanged": true,
+  "live_migration_count": 13,
+  "candidate_migration_count": 14,
+  "disk_free_bytes": 1094959104,
+  "deployed": false
+}

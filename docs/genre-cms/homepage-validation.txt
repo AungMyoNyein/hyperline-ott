@@ -1,0 +1,66 @@
+
+   INFO  Preparing database.
+
+  Creating migration table ...................................... 13.22ms DONE
+
+   INFO  Running migrations.
+
+  0001_01_01_000000_create_users_table .......................... 14.72ms DONE
+  0001_01_01_000001_create_cache_table ........................... 7.99ms DONE
+  0001_01_01_000002_create_jobs_table ............................ 9.62ms DONE
+  2026_11_08_000100_create_rbac_tables .......................... 21.74ms DONE
+  2026_11_08_000200_add_ott_fields_to_users_table ............... 10.39ms DONE
+  2026_11_08_000300_create_catalog_tables ....................... 19.03ms DONE
+  2026_11_08_000400_create_viewer_tables ........................ 25.71ms DONE
+  2026_11_08_000500_create_admin_audit_logs_table ................ 8.89ms DONE
+  2026_11_08_124741_create_personal_access_tokens_table .......... 9.06ms DONE
+  2026_11_10_000100_create_series_tables ........................ 74.01ms DONE
+  2026_11_10_120000_add_seasons_and_series_genres ............... 56.20ms DONE
+  2026_11_10_120100_add_episode_watch_progress .................. 32.82ms DONE
+  2026_11_10_120200_add_playable_owner_checks ................... 33.34ms DONE
+  2026_11_22_120000_add_genre_management_fields .................. 8.69ms DONE
+
+
+> test:e2e
+> playwright test premium-visual.spec.ts --update-snapshots
+
+
+Running 11 tests using 1 worker
+
+(node:1466881) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-home-desktop.png is re-generated, writing actual.
+  ✓   1 ../../tests/e2e/premium-visual.spec.ts:254:3 › visual major pages desktop (11.6s)
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-home-mobile.png is re-generated, writing actual.
+  ✓   2 ../../tests/e2e/premium-visual.spec.ts:254:3 › visual major pages mobile (6.1s)
+  ✓   3 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 360px (3.5s)
+  ✓   4 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 390px (3.8s)
+  ✓   5 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 768px (3.8s)
+  ✓   6 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 1366px (4.3s)
+  ✓   7 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 1920px (4.4s)
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-empty-home-mobile.png is re-generated, writing actual.
+  ✓   8 ../../tests/e2e/premium-visual.spec.ts:327:1 › branded fallback, keyboard navigation, mobile menu and reduced motion (1.5s)
+  ✓   9 ../../tests/e2e/premium-visual.spec.ts:355:1 › authenticated player fails closed without fetching media; seasons and search navigate (5.1s)
+  ✓  10 ../../tests/e2e/premium-visual.spec.ts:405:1 › CMS delete confirmation traps focus, cancels safely, and preserves unsaved changes across sections (1.6s)
+  ✓  11 ../../tests/e2e/premium-visual.spec.ts:443:1 › failed artwork falls back without an application image proxy (863ms)
+
+  11 passed (48.7s)
+
+> test:e2e
+> playwright test compact-ui.spec.ts
+
+
+Running 8 tests using 1 worker
+
+(node:1467573) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 360px (3.8s)
+  ✓  2 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 390px (3.6s)
+  ✓  3 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 768px (3.7s)
+  ✓  4 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 1366px (3.8s)
+  ✓  5 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 1920px (4.3s)
+  ✓  6 ../../tests/e2e/compact-ui.spec.ts:190:1 › brand fallback and long Burmese spotlight titles fit without clipping (1.3s)
+  ✓  7 ../../tests/e2e/compact-ui.spec.ts:234:1 › mixed artwork reserves its dimensions while images load or fail (722ms)
+  ✓  8 ../../tests/e2e/compact-ui.spec.ts:266:1 › small catalogs hide covered featured rows and empty series sections (917ms)
+
+  8 passed (23.9s)

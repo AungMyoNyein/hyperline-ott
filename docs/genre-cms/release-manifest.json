@@ -1,0 +1,84 @@
+{
+  "source_commit": "fe227e952d90c3fec33135d17a370c65f76d44b8",
+  "source_archive_sha256": "dbbe6a1604a1cd4568a829a69e27eff83566598a6fce0981d69a05c375d53355",
+  "images": {
+    "api": {
+      "tag": "hyperline-api:genre-cms-20261122T150019Z-391916b4f964",
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982",
+      "source_commit": "391916b4f964b23e82b9eb91ef31551f7ff79686"
+    },
+    "web": {
+      "tag": "hyperline-web:genre-final-20261122T152741Z-fe227e952d90",
+      "image_id": "sha256:b034610479a96457a220619e468223786a90cf900dbcb80125cd8cddfd62dff2",
+      "tree": "309a6d0fb88c5ed5f0ec62500a72a81ed22c36bb",
+      "source_commit": "fe227e952d90c3fec33135d17a370c65f76d44b8"
+    },
+    "cms": {
+      "tag": "hyperline-cms:genre-cms-20261122T150019Z-391916b4f964",
+      "image_id": "sha256:a5a503f06f212b6e189f1d8e37d7567320485f784999b1d79797cf462b16e54e",
+      "tree": "c013aa97bb1f4bf80c80a8b4f7f22c1de570b09b",
+      "source_commit": "391916b4f964b23e82b9eb91ef31551f7ff79686"
+    },
+    "worker": {
+      "tag": "hyperline-api:genre-cms-20261122T150019Z-391916b4f964",
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982",
+      "source_commit": "391916b4f964b23e82b9eb91ef31551f7ff79686"
+    },
+    "scheduler": {
+      "tag": "hyperline-api:genre-cms-20261122T150019Z-391916b4f964",
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982",
+      "source_commit": "391916b4f964b23e82b9eb91ef31551f7ff79686"
+    }
+  },
+  "runtime_before": {
+    "api": {
+      "container_id": "4abce731eca70ae28c1e35c9d0159a62498d0a6e7c30a6acbd1438d6f0db0775",
+      "image_id": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "started_at": "2026-11-21T05:37:34.499208721Z"
+    },
+    "worker": {
+      "container_id": "6b8755c5aff02383ec299608d27212cf63b8271a55d0bbfbb06487d0e467abc5",
+      "image_id": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "started_at": "2026-11-21T05:37:47.63307307Z"
+    },
+    "scheduler": {
+      "container_id": "674526893a64a500e0ffee99c0e2ae05d48be94ef2b558526d045f33f58f0212",
+      "image_id": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "started_at": "2026-11-21T05:37:53.853402579Z"
+    },
+    "web": {
+      "container_id": "33fe55282c37973ba3570a61ff53d6a4859a40cadc2e8a8a8c4f3a4f2dc35319",
+      "image_id": "sha256:9a6c0876f46fbfbbe4de5da084f6a44bb90b48ba5db2441414bbdd89ae8b7666",
+      "started_at": "2026-11-22T11:16:06.172937526Z"
+    },
+    "cms": {
+      "container_id": "2ba10619976769c62922a166da7999ad4bbe1e6794c5159ee5a52d07e8a4df78",
+      "image_id": "sha256:9845d3e940c4158cbe51a8363508d9b833001f23ed4e2941bd106bca1243e98f",
+      "started_at": "2026-11-21T05:37:40.73789125Z"
+    },
+    "gateway": {
+      "container_id": "bebf6af430e51a6015e3ad69a50213f1fe9a4768bc4685fd17f883f01c198669",
+      "image_id": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
+      "started_at": "2026-11-09T15:32:12.341975586Z"
+    },
+    "postgres": {
+      "container_id": "32dbaf1da27dea95922541764322085636ad1cc49542b41185b3a4e539f08100",
+      "image_id": "sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777",
+      "started_at": "2026-11-09T15:32:12.334437514Z"
+    },
+    "redis": {
+      "container_id": "8b0ebbccaa4cfb3f326b8ce008ce0f15e3e8b534c1ba95aebf0ae3af03ce7e1f",
+      "image_id": "sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2",
+      "started_at": "2026-11-09T15:32:12.413908343Z"
+    }
+  },
+  "runtime_unchanged": true,
+  "deployed": false,
+  "migration": "2026_11_22_120000_add_genre_management_fields; additive, application rollback retains new metadata",
+  "web_build_strategy": "Verified prior Web candidate dependency layer; unchanged package/package-lock; complete committed Web source overlay and production rebuild",
+  "web_dependency_base_image": "sha256:84e947abd96a5bfd59f7d07d28fb2f8da132beb7056f25fee535c62b98ea8f2b",
+  "release_directory": "/opt/hyperline-ott/genre-cms/deploy/releases/genre-final-20261122T152741Z-fe227e952d90"
+}

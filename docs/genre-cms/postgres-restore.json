@@ -1,5 +1,6 @@
 {
   "passed": true,
+  "candidate_api_image": "hyperline-api:genre-cms-20261122T150019Z-391916b4f964",
   "postgres": "16-alpine",
   "isolation": "network none; tmpfs database; API shares only disposable network namespace",
   "applied_before": 13,
@@ -33,8 +34,8 @@
     "watchlists"
   ],
   "optional_seed_idempotent": true,
-  "snapshot_sha256": "e3ee4215bc8835633f8658ba9ca2ea7394fda9b3dfc5ea1a880d2de0b5831a34",
-  "private_snapshot": "/tmp/hyperline-genre-restore-9m7k_ctu/uat-readonly.dump",
-  "migration_output": "\n   INFO  Running migrations.  \n\n  2026_11_22_120000_add_genre_management_fields ................. 41.74ms DONE\n\n",
+  "snapshot_sha256": "b561648cd111926470835cf749158e2bebae7f609a8cd82cc13f2dd91827540f",
+  "private_snapshot": "/tmp/hyperline-genre-restore-4k6xoci4/uat-readonly.dump",
+  "migration_output": "\n   INFO  Running migrations.  \n\n  2026_11_22_120000_add_genre_management_fields ................. 80.17ms DONE\n\n",
   "live_migrations_run": false
 }

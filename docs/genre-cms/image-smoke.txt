@@ -1,0 +1,38 @@
+
+   INFO  Preparing database.
+
+  Creating migration table ...................................... 13.36ms DONE
+
+   INFO  Running migrations.
+
+  0001_01_01_000000_create_users_table .......................... 11.71ms DONE
+  0001_01_01_000001_create_cache_table ........................... 7.23ms DONE
+  0001_01_01_000002_create_jobs_table ............................ 8.42ms DONE
+  2026_11_08_000100_create_rbac_tables .......................... 18.41ms DONE
+  2026_11_08_000200_add_ott_fields_to_users_table ................ 7.31ms DONE
+  2026_11_08_000300_create_catalog_tables ....................... 22.32ms DONE
+  2026_11_08_000400_create_viewer_tables ........................ 22.03ms DONE
+  2026_11_08_000500_create_admin_audit_logs_table ................ 7.32ms DONE
+  2026_11_08_124741_create_personal_access_tokens_table .......... 6.72ms DONE
+  2026_11_10_000100_create_series_tables ........................ 79.50ms DONE
+  2026_11_10_120000_add_seasons_and_series_genres ............... 63.99ms DONE
+  2026_11_10_120100_add_episode_watch_progress .................. 37.56ms DONE
+  2026_11_10_120200_add_playable_owner_checks ................... 34.49ms DONE
+  2026_11_22_120000_add_genre_management_fields .................. 8.68ms DONE
+
+
+> test:e2e
+> playwright test genre-cms.spec.ts
+
+
+Running 5 tests using 1 worker
+
+(node:1478042) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 360px (18.8s)
+  ✓  2 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 390px (13.9s)
+  ✓  3 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 768px (14.4s)
+  ✓  4 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 1366px (15.7s)
+  ✓  5 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 1920px (16.4s)
+
+  5 passed (1.3m)
