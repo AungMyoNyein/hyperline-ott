@@ -1,0 +1,75 @@
+{
+  "release": "uat-compact-20261122T105516Z-edb8b98bd846",
+  "source_commit": "edb8b98bd846c38f74ff1929efb66a5b67d5c034",
+  "viewer_tree": "8b5816c79d1ceebcdf86d40166a712392fbc0e2f",
+  "candidate": {
+    "tag": "hyperline-web:uat-compact-20261122T105516Z-edb8b98bd846",
+    "image_id": "sha256:9a6c0876f46fbfbbe4de5da084f6a44bb90b48ba5db2441414bbdd89ae8b7666",
+    "build_api_url": "https://api.zentunnel.net/api/v1"
+  },
+  "rollback": {
+    "web_image_id": "sha256:353ddc2c7e2b4a41f75e82763b8eeed54382ff62191e143e8a75ce92082b27ce",
+    "tag": "hyperline-web:rollback-uat-compact-20261122T105516Z-edb8b98bd846",
+    "strategy": "Viewer image only; retain existing runtime configuration and all data."
+  },
+  "runtime_before": {
+    "web": {
+      "container_id": "86b0db5b0d5a270d585e076382b02812987b807e4c10cc7eac52cf8fc9c63c14",
+      "image_id": "sha256:353ddc2c7e2b4a41f75e82763b8eeed54382ff62191e143e8a75ce92082b27ce",
+      "started_at": "2026-11-21T05:37:40.738594742Z"
+    },
+    "cms": {
+      "container_id": "2ba10619976769c62922a166da7999ad4bbe1e6794c5159ee5a52d07e8a4df78",
+      "image_id": "sha256:9845d3e940c4158cbe51a8363508d9b833001f23ed4e2941bd106bca1243e98f",
+      "started_at": "2026-11-21T05:37:40.73789125Z"
+    },
+    "api": {
+      "container_id": "4abce731eca70ae28c1e35c9d0159a62498d0a6e7c30a6acbd1438d6f0db0775",
+      "image_id": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "started_at": "2026-11-21T05:37:34.499208721Z"
+    },
+    "worker": {
+      "container_id": "6b8755c5aff02383ec299608d27212cf63b8271a55d0bbfbb06487d0e467abc5",
+      "image_id": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "started_at": "2026-11-21T05:37:47.63307307Z"
+    },
+    "scheduler": {
+      "container_id": "674526893a64a500e0ffee99c0e2ae05d48be94ef2b558526d045f33f58f0212",
+      "image_id": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "started_at": "2026-11-21T05:37:53.853402579Z"
+    },
+    "gateway": {
+      "container_id": "bebf6af430e51a6015e3ad69a50213f1fe9a4768bc4685fd17f883f01c198669",
+      "image_id": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
+      "started_at": "2026-11-09T15:32:12.341975586Z"
+    },
+    "postgres": {
+      "container_id": "32dbaf1da27dea95922541764322085636ad1cc49542b41185b3a4e539f08100",
+      "image_id": "sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777",
+      "started_at": "2026-11-09T15:32:12.334437514Z"
+    },
+    "redis": {
+      "container_id": "8b0ebbccaa4cfb3f326b8ce008ce0f15e3e8b534c1ba95aebf0ae3af03ce7e1f",
+      "image_id": "sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2",
+      "started_at": "2026-11-09T15:32:12.413908343Z"
+    }
+  },
+  "runtime_unchanged_after_build": true,
+  "deployed": false,
+  "smoke_test": {
+    "status": "passed",
+    "tests_passed": 7,
+    "viewports": [
+      360,
+      390,
+      768,
+      1366,
+      1920
+    ],
+    "axe_scans": 10,
+    "axe_violations": 0,
+    "api": "intercepted fixtures only",
+    "container": "temporary localhost:18085 viewer; removed after testing"
+  },
+  "runtime_unchanged_after_smoke": true
+}

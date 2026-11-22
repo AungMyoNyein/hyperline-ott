@@ -13,15 +13,21 @@ function MovieCard({
   catalogHref?: string;
 }) {
   const detailsHref = `/movies/${encodeURIComponent(m.slug)}${catalogHref ? `?from=${encodeURIComponent(catalogHref)}` : ""}`;
+  // YouTube's native 16:9 preview avoids the baked-in bands in hqdefault.
+  // Keep supplied portrait posters intact and load all artwork at its origin.
+  const preview = m.poster_url?.replace(
+    /^(https:\/\/i\.ytimg\.com\/vi\/[A-Za-z0-9_-]{11}\/)(?:hqdefault|sddefault|default)\.jpg$/,
+    "$1mqdefault.jpg",
+  );
   return (
-    <article className="card">
+    <article className="card movie-card">
       <Link
         href={detailsHref}
         className="card-main"
         aria-label={`${m.title} — details`}
       >
         <div className="card-image">
-          <Artwork src={m.poster_url} title={m.title} />
+          <Artwork src={preview} title={m.title} shape="landscape" />
           <span className="card-type">Movie</span>
           <span className="card-reveal" aria-hidden="true">
             Explore title ↗

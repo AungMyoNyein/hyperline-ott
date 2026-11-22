@@ -11,7 +11,12 @@ use Illuminate\Contracts\Console\Kernel;
 
 // Only the disposable browser-test database may be seeded by this script.
 require __DIR__.'/../../services/api/vendor/autoload.php';
-if (getenv('DB_DATABASE') !== '/tmp/hyperline-browser.sqlite' || getenv('APP_ENV') !== 'testing') {
+$fixtureDatabase = (string) getenv('DB_DATABASE');
+if (!preg_match('~^/tmp/hyperline-browser-[A-Za-z0-9]{6}\.sqlite$~D', $fixtureDatabase)
+    || realpath($fixtureDatabase) !== $fixtureDatabase
+    || is_link($fixtureDatabase)
+    || getenv('DB_CONNECTION') !== 'sqlite'
+    || getenv('APP_ENV') !== 'testing') {
     throw new RuntimeException('Browser fixtures require the dedicated temporary database.');
 }
 $app = require __DIR__.'/../../services/api/bootstrap/app.php';

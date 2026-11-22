@@ -12,7 +12,10 @@ final class LoopbackPlaybackSigner implements PlaybackUrlSigner
 {
     public function sign(VideoSource $source, PlaybackSession $session): SignedPlaybackUrl
     {
-        if (! app()->environment('testing') || config('database.connections.sqlite.database') !== '/tmp/hyperline-browser.sqlite'
+        $database = (string) config('database.connections.sqlite.database');
+        if (! app()->environment('testing') || config('database.default') !== 'sqlite'
+            || ! preg_match('~^/tmp/hyperline-browser-[A-Za-z0-9]{6}\.sqlite$~D', $database)
+            || realpath($database) !== $database || is_link($database)
             || ! str_starts_with($source->url, 'https://127.0.0.1:18084/')) {
             throw new \LogicException('Loopback signer is restricted to the disposable browser fixture.');
         }

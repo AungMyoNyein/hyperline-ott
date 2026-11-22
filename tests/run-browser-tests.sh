@@ -26,6 +26,7 @@ ISOLATE
 fi
 python3 - <<'PY'
 import socket
+from pathlib import Path
 for port in (18081,18082,18083,18084):
     with socket.socket() as sock:
         sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
@@ -33,8 +34,11 @@ for port in (18081,18082,18083,18084):
             sock.bind(('127.0.0.1',port))
         except OSError:
             raise SystemExit(f'Test port {port} is busy; stop only the corresponding test server first.')
+# A cancelled negative-CORS test must not poison the next fixture run.
+Path('/tmp/hyperline-test-media/block-cors').unlink(missing_ok=True)
 PY
-export APP_ENV=testing DB_CONNECTION=sqlite DB_DATABASE=/tmp/hyperline-browser.sqlite
+export APP_ENV=testing DB_CONNECTION=sqlite
+export DB_DATABASE="$(mktemp /tmp/hyperline-browser-XXXXXX.sqlite)"
 export CACHE_STORE=array SESSION_DRIVER=array QUEUE_CONNECTION=sync
 export OTT_SIGNED_URLS=false OTT_REJECT_UNRESOLVED_STREAM_HOSTS=false
 if [ "${HYPERLINE_SIGNED_FIXTURE:-0}" = 1 ]; then
@@ -46,10 +50,7 @@ export CORS_ALLOWED_ORIGINS=http://127.0.0.1:18082,http://127.0.0.1:18083
 export NEXT_PUBLIC_API_URL=http://127.0.0.1:18081/api/v1
 export PLAYWRIGHT_BROWSERS_PATH=/tmp/hyperline-playwright
 export APP_KEY="$(php -r 'echo "base64:".base64_encode(random_bytes(32));')"
-# The fixture database is disposable: start every run from a clean file so
-# progress rows or catalog entries from earlier runs cannot leak across specs.
-rm -f "$DB_DATABASE"
-touch "$DB_DATABASE"
+# Each run owns a new disposable database; never reset an existing database.
 (cd services/api && php artisan migrate --force)
 php tests/fixtures/seed.php
 if [ -n "${HYPERLINE_CATALOG_CSV:-}" ]; then

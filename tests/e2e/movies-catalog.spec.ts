@@ -196,8 +196,8 @@ for (const [width, height] of [
       ),
     ).toBe(true);
     const heading = await page.locator(".catalog-heading").boundingBox();
-    expect(heading!.height).toBeGreaterThanOrEqual(width <= 600 ? 120 : 160);
-    expect(heading!.height).toBeLessThanOrEqual(width <= 600 ? 160 : 220);
+    expect(heading!.height).toBeGreaterThanOrEqual(width <= 600 ? 100 : 120);
+    expect(heading!.height).toBeLessThanOrEqual(width <= 600 ? 130 : 160);
     for (const action of await page.locator(".card-actions a").all()) {
       const box = await action.boundingBox();
       expect(box!.height).toBeGreaterThanOrEqual(44);

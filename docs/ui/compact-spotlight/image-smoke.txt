@@ -1,0 +1,18 @@
+
+> test:e2e
+> playwright test compact-ui.spec.ts --output=/tmp/hyperline-compact-image-results
+
+
+Running 7 tests using 1 worker
+
+(node:1308846) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 360px (8.4s)
+  ✓  2 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 390px (7.6s)
+  ✓  3 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 768px (7.7s)
+  ✓  4 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 1366px (7.5s)
+  ✓  5 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 1920px (6.8s)
+  ✓  6 ../../tests/e2e/compact-ui.spec.ts:190:1 › brand fallback and long Burmese spotlight titles fit without clipping (2.0s)
+  ✓  7 ../../tests/e2e/compact-ui.spec.ts:234:1 › mixed artwork reserves its dimensions while images load or fail (1.2s)
+
+  7 passed (44.3s)
