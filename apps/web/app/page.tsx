@@ -12,6 +12,7 @@ import { ContinueWatchingRow, MovieRow, SeriesRow } from "./cards";
 import { useSession } from "./session";
 import Artwork from "./components/artwork";
 import { ErrorState, Skeleton } from "./components/ui";
+import { contentLang } from "./components/content-language";
 type Home = {
   hero: Movie | null;
   featured: Movie[];
@@ -76,7 +77,9 @@ export default function HomePage() {
                   ? "THE HYPERLINE SPOTLIGHT"
                   : "WELCOME TO YOUR NEXT CHAPTER"}
               </p>
-              <h1>{hero?.title || "Stories that stay with you."}</h1>
+              <h1 lang={contentLang(hero?.title)}>
+                {hero?.title || "Stories that stay with you."}
+              </h1>
               {hero && (
                 <p className="hero-meta">
                   {[
@@ -90,7 +93,7 @@ export default function HomePage() {
                     .join(" · ")}
                 </p>
               )}
-              <p className="hero-synopsis">
+              <p className="hero-synopsis" lang={contentLang(hero?.synopsis)}>
                 {hero?.synopsis ||
                   "Big-screen stories. Small-screen escapes. A world of cinema and series, brought together by HyperLine."}
               </p>

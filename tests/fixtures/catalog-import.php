@@ -4,7 +4,10 @@ require __DIR__.'/../../services/api/vendor/autoload.php';
 $app=require __DIR__.'/../../services/api/bootstrap/app.php';
 $kernel=$app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
-if (! app()->environment('testing') || config('database.default')!=='sqlite' || config('database.connections.sqlite.database')!=='/tmp/hyperline-browser.sqlite') {
+if (! app()->environment('testing') || config('database.default')!=='sqlite'
+    || !preg_match('~^/tmp/hyperline-browser-[A-Za-z0-9]{6}\.sqlite$~D', (string) config('database.connections.sqlite.database'))
+    || realpath(config('database.connections.sqlite.database')) !== config('database.connections.sqlite.database')
+    || is_link(config('database.connections.sqlite.database'))) {
     throw new RuntimeException('Catalog browser fixture requires the disposable SQLite harness');
 }
 $exit=$kernel->call('hyperline:import-youtube-catalog',[

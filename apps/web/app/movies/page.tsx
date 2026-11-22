@@ -134,13 +134,14 @@ function CatalogContent() {
               <button
                 type="button"
                 className="secondary"
+                aria-label="Clear search"
                 onClick={() => {
                   setQuery("");
                   update({ q: "", page: "" });
                   setRevision((r) => r + 1);
                 }}
               >
-                Clear search
+                Clear
               </button>
             )}
           </div>
