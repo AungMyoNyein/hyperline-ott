@@ -3,6 +3,10 @@ export type Genre = {
   name: string;
   slug: string;
   movies_count?: number;
+  series_count?: number;
+  name_my?: string | null;
+  enabled?: boolean;
+  sort_order?: number;
 };
 export type Source = {
   id?: number;
@@ -60,6 +64,7 @@ export type Season = {
   updated_at?: string;
 };
 export type Series = {
+  genres?: Genre[];
   id: number;
   title: string;
   slug: string;
@@ -119,6 +124,7 @@ export async function api<T>(
       data?.message || `Request failed (${response.status}).`,
       data?.errors || {},
     );
+  if (response.status === 204) return undefined as T;
   if (!data) throw new Error("The API returned an unreadable response.");
   return data as T;
 }

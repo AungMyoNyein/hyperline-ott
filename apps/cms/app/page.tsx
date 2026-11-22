@@ -14,6 +14,9 @@ import MovieEditor from "./components/movie-editor";
 import MovieLibrary from "./components/movie-library";
 import SeriesLibrary from "./components/series-library";
 import AuditScreen from "./components/audit-screen";
+import HomepageEditor from "./components/homepage-editor";
+import GenreManager from "./components/genre-manager";
+import ContentTools from "./components/content-tools";
 import Confirmation from "./components/confirmation";
 type Dashboard = {
   movies: {
@@ -126,7 +129,7 @@ export default function CMS() {
       }),
       api<{
         data: Genre[];
-      }>("/genres", token, { signal: controller.signal }),
+      }>("/admin/genres", token, { signal: controller.signal }),
       api<{
         data: Dashboard;
       }>("/admin/dashboard", token, { signal: controller.signal }),
@@ -322,10 +325,13 @@ export default function CMS() {
           <p className="nav-caption">WORKSPACE</p>
           <nav aria-label="Studio navigation">
             {[
-              ["overview", "Overview", "◫"],
+              ["overview", "Dashboard", "◫"],
               ["movies", "Movies", "▣"],
               ["series", "Series & episodes", "▤"],
               ["genres", "Genres", "◇"],
+              ["artwork", "Artwork", "▧"],
+              ["sources", "Video Sources", "▷"],
+              ["qa", "Content QA", "✓"],
               ["activity", "Audit & activity", "◷"],
             ].map(([key, label, icon]) => (
               <button
@@ -451,6 +457,9 @@ export default function CMS() {
                         movies: "Movie collection",
                         series: "Series & episodes",
                         genres: "Genre collection",
+                        artwork: "Artwork library",
+                        sources: "Video source review",
+                        qa: "Content quality review",
                         activity: "Workspace activity",
                       } as Record<string, string>
                     )[view]
@@ -464,7 +473,7 @@ export default function CMS() {
                       : view === "series"
                         ? "Build stories, season by season."
                         : view === "genres"
-                          ? "Browse the genres available for your titles."
+                          ? "Manage bilingual genres and content assignments."
                           : "A record of changes across your catalog."}
                 </p>
               </div>
@@ -573,31 +582,18 @@ export default function CMS() {
               />
             </div>
             <div hidden={view !== "series"}>
-              <SeriesLibrary token={token} />
+              <SeriesLibrary token={token} genres={genres} />
             </div>
-            <section hidden={view !== "genres"} className="workspace-card">
-              <h2>Available genres</h2>
-              <p className="muted">
-                Genres can be assigned in movie and series editors. Creating or
-                deleting genres is not available in this workspace.
-              </p>
-              {genres.length ? (
-                <div className="genre-collection">
-                  {genres.map((g) => (
-                    <article key={g.id}>
-                      <h3>{g.name}</h3>
-                      {g.movies_count != null && (
-                        <p className="muted">
-                          {g.movies_count} published movies
-                        </p>
-                      )}
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <p className="muted">No genres available yet.</p>
-              )}
-            </section>
+            {view === "overview" && <HomepageEditor token={token} />}
+            <div hidden={view !== "genres"}>
+              <GenreManager
+                token={token}
+                changed={() => setRevision((r) => r + 1)}
+              />
+            </div>
+            {["artwork", "sources", "qa"].includes(view) && (
+              <ContentTools token={token} mode={view} edit={edit} />
+            )}
             <div hidden={view !== "overview" && view !== "activity"}>
               <div hidden={view !== "activity"}>
                 <AuditScreen token={token} />

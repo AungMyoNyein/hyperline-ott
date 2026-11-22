@@ -1,0 +1,9 @@
+{
+  "package_url": "https://registry.npmjs.org/@fontsource/noto-sans-myanmar/-/noto-sans-myanmar-5.3.0.tgz",
+  "package_sha256": "cb5c432a74f37366a53d30a324085ff8748b70c17424f8aef297d32705641bd7",
+  "files": {
+    "LICENSE": "2d7975c18ae25af40957362606d19048d6cd06fa6776aaa86188666e147f630d",
+    "noto-sans-myanmar-myanmar-700-normal.woff2": "3aef087ebf73c0186dda5b1bd0651b9776ef73e6158a401344a03e0a654b7969",
+    "noto-sans-myanmar-myanmar-400-normal.woff2": "da6f87b8407a0e5a223cfb90328f9aad4cc31c728cfad35263d0e237f13e98ff"
+  }
+}

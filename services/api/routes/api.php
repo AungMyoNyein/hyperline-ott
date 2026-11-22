@@ -67,6 +67,13 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
             Route::post('/logout', [Admin\AuthController::class, 'logout'])->name('logout');
+            Route::get('/homepage', [Admin\HomepageController::class, 'show']);
+            Route::patch('/homepage', [Admin\HomepageController::class, 'update']);
+            Route::get('/genres', [Admin\GenreController::class, 'index']);
+            Route::post('/genres', [Admin\GenreController::class, 'store']);
+            Route::patch('/genres/{genre}', [Admin\GenreController::class, 'update']);
+            Route::delete('/genres/{genre}', [Admin\GenreController::class, 'destroy']);
+
             Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
 
             Route::get('/movies', [Admin\MovieController::class, 'index'])->name('movies.index');

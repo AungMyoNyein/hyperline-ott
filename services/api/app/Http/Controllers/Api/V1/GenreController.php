@@ -12,9 +12,9 @@ class GenreController extends Controller
 {
     public function index(Request $request): AnonymousResourceCollection
     {
-        $genres = Genre::query()
+        $genres = Genre::query()->where('enabled', true)
             ->withCount(['movies' => fn ($query) => $query->where('movies.published', true)])
-            ->orderBy('name')
+            ->orderBy('sort_order')->orderBy('name')
             ->get();
 
         return GenreResource::collection($genres);

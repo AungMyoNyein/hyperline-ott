@@ -10,6 +10,11 @@ function Preview({
   shape: string;
 }) {
   const [failed, setFailed] = useState("");
+  const [dimensions, setDimensions] = useState<{
+    url: string;
+    width: number;
+    height: number;
+  } | null>(null);
   const safe = /^https:\/\//.test(url);
   return (
     <figure>
@@ -25,13 +30,37 @@ function Preview({
                 ? { objectFit: "contain" }
                 : undefined
             }
+            onLoad={(e) =>
+              setDimensions({
+                url,
+                width: e.currentTarget.naturalWidth,
+                height: e.currentTarget.naturalHeight,
+              })
+            }
             onError={() => setFailed(url)}
           />
         ) : (
           <span>{url ? "Artwork unavailable" : "No artwork selected"}</span>
         )}
       </div>
-      <figcaption>{label}</figcaption>
+      <figcaption>
+        {label}
+        {dimensions?.url === url && (
+          <small>
+            {" "}
+            · {dimensions.width} × {dimensions.height}
+            {Math.abs(
+              dimensions.width / dimensions.height -
+                (shape === "portrait" ? 2 / 3 : 16 / 9),
+            ) > 0.12
+              ? " · Different aspect ratio; preview preserves original"
+              : ""}
+            {dimensions.width < (shape === "portrait" ? 600 : 1280)
+              ? " · Below recommended resolution"
+              : ""}
+          </small>
+        )}
+      </figcaption>
     </figure>
   );
 }

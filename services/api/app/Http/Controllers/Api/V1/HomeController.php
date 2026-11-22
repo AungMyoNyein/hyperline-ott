@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\GenreResource;
 use App\Http\Resources\MovieResource;
 use App\Http\Resources\SeriesResource;
+use App\Models\Genre;
 use App\Models\Movie;
 use App\Models\Series;
 use App\Models\WatchProgress;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -24,6 +27,8 @@ class HomeController extends Controller
 
         return response()->json([
             'data' => [
+                'section_order' => json_decode(DB::table('homepage_settings')->where('id', 1)->value('sections') ?? 'null', true) ?? ['continue', 'trending', 'latest', 'genres', 'series', 'vertical', 'featured'],
+                'genres' => GenreResource::collection(Genre::where('enabled', true)->withCount(['movies' => fn ($q) => $q->where('published', true)])->orderBy('sort_order')->orderBy('name')->get())->toArray($request),
                 'hero' => $hero instanceof Movie ? $this->row($hero, $request) : null,
                 'featured' => $this->rows($featured, $request),
                 'trending' => $this->rows($trending, $request),

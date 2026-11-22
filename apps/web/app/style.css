@@ -1809,3 +1809,13 @@ footer.site {
     padding-inline: 4px;
   }
 }
+
+.genre-discovery {
+  padding: 1.5rem var(--page-gutter, 4%);
+}
+.genre-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block: 1rem;
+}

@@ -14,7 +14,9 @@ use App\Models\SeriesEpisode;
 use App\Models\VideoSource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Series administration: full CRUD for the series container plus metadata and
@@ -25,7 +27,7 @@ use Illuminate\Support\Facades\DB;
  */
 class SeriesController extends Controller
 {
-    public function index(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
         $filters = $request->validate([
             'published' => ['sometimes', 'boolean'],
@@ -35,7 +37,7 @@ class SeriesController extends Controller
         ]);
 
         $series = Series::query()
-            ->withCount('episodes')
+            ->with('genres')->withCount('episodes')
             ->withCount('seasons')
             ->category($filters['category'] ?? null)
             ->search($filters['q'] ?? null)
@@ -190,9 +192,11 @@ class SeriesController extends Controller
             return;
         }
 
-        $series->genres()->sync(
-            Genre::query()->whereIn('slug', $slugs)->pluck('id')->all()
-        );
+        $ids = Genre::query()->whereIn('slug', $slugs)->lockForUpdate()->pluck('id')->all();
+        if (count($ids) !== count(array_unique($slugs))) {
+            throw ValidationException::withMessages(['genres' => 'A selected genre no longer exists. Reload and retry.']);
+        }
+        $series->genres()->sync($ids);
     }
 
     /**
