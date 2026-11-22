@@ -51,3 +51,6 @@ deploy/reports/
 *.log
 playwright-report/
 test-results/
+
+/apps/web/node_modules
+/apps/cms/node_modules

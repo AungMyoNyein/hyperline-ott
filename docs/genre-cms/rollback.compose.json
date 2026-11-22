@@ -1,0 +1,24 @@
+{
+  "services": {
+    "api": {
+      "image": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "pull_policy": "never"
+    },
+    "web": {
+      "image": "sha256:9a6c0876f46fbfbbe4de5da084f6a44bb90b48ba5db2441414bbdd89ae8b7666",
+      "pull_policy": "never"
+    },
+    "cms": {
+      "image": "sha256:9845d3e940c4158cbe51a8363508d9b833001f23ed4e2941bd106bca1243e98f",
+      "pull_policy": "never"
+    },
+    "worker": {
+      "image": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "pull_policy": "never"
+    },
+    "scheduler": {
+      "image": "sha256:f5dacb2176ed31616051bf5a066b7ff1b8ba956084ab500e7d47896dfe8001f9",
+      "pull_policy": "never"
+    }
+  }
+}

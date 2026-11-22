@@ -196,7 +196,7 @@ test("movie progress resumes, throttles event bursts, saves on pause, and comple
   await openViewerMenu(page);
   await page.getByRole("link", { name: "Home", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Latest movies" }),
+    page.getByRole("heading", { name: "Trending now" }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Continue watching", exact: true }),

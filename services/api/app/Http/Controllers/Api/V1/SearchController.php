@@ -43,13 +43,14 @@ class SearchController extends Controller
             ->take($limit)
             ->get();
 
-        $genres = Genre::query()
+        $genres = Genre::query()->where('enabled', true)
             ->withCount(['movies' => fn ($query) => $query->where('movies.published', true)])
             ->where(function ($query) use ($needle) {
                 $query->whereRaw('lower(name) like ?', [$needle])
-                    ->orWhereRaw('lower(slug) like ?', [$needle]);
+                    ->orWhereRaw('lower(slug) like ?', [$needle])
+                    ->orWhereRaw('lower(name_my) like ?', [$needle]);
             })
-            ->orderBy('name')
+            ->orderBy('sort_order')->orderBy('name')
             ->take(5)
             ->get();
 

@@ -1,0 +1,72 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  393.9kB
+
+Step 1/6 : FROM hyperline-web:genre-cms-20261122T150019Z-391916b4f964
+ ---> 84e947abd96a
+Step 2/6 : WORKDIR /app
+ ---> Running in 7359212c244e
+ ---> Removed intermediate container 7359212c244e
+ ---> 1e7bc28849c0
+Step 3/6 : COPY . .
+ ---> 98aa6c378e35
+Step 4/6 : ARG NEXT_PUBLIC_API_URL
+ ---> Running in 615b31a2646d
+ ---> Removed intermediate container 615b31a2646d
+ ---> 086056b52ffc
+Step 5/6 : RUN NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL npm run build
+ ---> Running in ca4e18f73421
+
+> build
+> next build
+
+   ▲ Next.js 15.5.29
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 36.3s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/11) ...
+   Generating static pages (2/11)
+   Generating static pages (5/11)
+   Generating static pages (8/11)
+ ✓ Generating static pages (11/11)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    3.21 kB         119 kB
+├ ○ /_not-found                            991 B         104 kB
+├ ○ /genres                              1.96 kB         108 kB
+├ ƒ /login                               2.88 kB         109 kB
+├ ○ /movies                              2.24 kB         118 kB
+├ ƒ /movies/[slug]                       4.23 kB         116 kB
+├ ○ /my-list                             3.78 kB         115 kB
+├ ○ /search                              1.23 kB         117 kB
+├ ○ /series                                831 B         116 kB
+├ ƒ /series/[slug]                        4.9 kB         116 kB
+└ ƒ /watch                                7.4 kB         114 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/255-73938ce8a8eac1ad.js       46.6 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)          2.04 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+npm notice To update run: npm install -g npm@12.2.3
+npm notice
+ ---> Removed intermediate container ca4e18f73421
+ ---> 2a2fe3fd10ee
+Step 6/6 : LABEL org.opencontainers.image.revision=fe227e952d90c3fec33135d17a370c65f76d44b8
+ ---> Running in 8d0b7d75c6f2
+ ---> Removed intermediate container 8d0b7d75c6f2
+ ---> b034610479a9
+Successfully built b034610479a9
+Successfully tagged hyperline-web:genre-final-20261122T152741Z-fe227e952d90

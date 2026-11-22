@@ -3,6 +3,7 @@ export type Genre = {
   name: string;
   slug: string;
   movies_count?: number;
+  name_my?: string | null;
 };
 export type YouTubeAttribution = {
   platform: "YouTube";

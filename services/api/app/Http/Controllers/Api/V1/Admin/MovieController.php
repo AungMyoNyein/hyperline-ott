@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class MovieController extends Controller
 {
@@ -152,9 +153,11 @@ class MovieController extends Controller
             return;
         }
 
-        $movie->genres()->sync(
-            Genre::query()->whereIn('slug', $slugs)->pluck('id')->all()
-        );
+        $ids = Genre::query()->whereIn('slug', $slugs)->lockForUpdate()->pluck('id')->all();
+        if (count($ids) !== count(array_unique($slugs))) {
+            throw ValidationException::withMessages(['genres' => 'A selected genre no longer exists. Reload and retry.']);
+        }
+        $movie->genres()->sync($ids);
     }
 
     /**

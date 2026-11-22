@@ -12,6 +12,7 @@ body {
   color: var(--text);
   font:
     14px/1.6 Arial,
+    var(--font-myanmar),
     Helvetica,
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -1086,4 +1087,18 @@ nav:not(.studio-sidebar nav) {
     padding: 18px 14px;
     gap: 10px 12px;
   }
+}
+
+[lang="my"] {
+  font-family: var(--font-myanmar), "Myanmar Text", sans-serif;
+  line-height: 1.8;
+}
+.table-wrap {
+  overflow-x: auto;
+}
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-block: 1rem;
 }

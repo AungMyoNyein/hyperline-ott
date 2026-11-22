@@ -123,7 +123,21 @@ async function fixtures(page: Page, empty = false) {
     const auth = !!request.headers().authorization;
     let body: unknown = { data: [] };
     let status = 200;
-    if (path === "/home")
+    if (path === "/admin/homepage")
+      body = {
+        data: {
+          sections: [
+            "continue",
+            "trending",
+            "latest",
+            "genres",
+            "series",
+            "vertical",
+            "featured",
+          ],
+        },
+      };
+    else if (path === "/home")
       body = {
         data: {
           hero: empty ? null : movie,
@@ -143,7 +157,8 @@ async function fixtures(page: Page, empty = false) {
             : [],
         },
       };
-    else if (path === "/genres") body = { data: empty ? [] : [genre] };
+    else if (path === "/genres" || path === "/admin/genres")
+      body = { data: empty ? [] : [genre] };
     else if (path === "/movies") body = pageOf(empty ? [] : [movie]);
     else if (path === "/movies/local-test-pattern") body = { data: movie };
     else if (path === "/series") body = pageOf(empty ? [] : [series]);
@@ -349,7 +364,10 @@ test("authenticated player fails closed without fetching media; seasons and sear
   await fixtures(page);
   await login(page);
   await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
-  await page.getByRole("link", { name: "More info", exact: true }).click();
+  await page
+    .locator(".hero")
+    .getByRole("link", { name: "Details", exact: true })
+    .click();
   await page.waitForURL(`${web}/movies/${movie.slug}`);
   await expect(
     page.getByRole("heading", { name: movie.title, exact: true }),
@@ -396,7 +414,7 @@ test("CMS delete confirmation traps focus, cancels safely, and preserves unsaved
   await page.getByLabel("Title", { exact: true }).fill("Unsaved fixture title");
   await page
     .getByRole("navigation", { name: "Studio navigation" })
-    .getByRole("button", { name: "Overview", exact: true })
+    .getByRole("button", { name: "Dashboard", exact: true })
     .click();
   await page
     .getByRole("navigation", { name: "Studio navigation" })

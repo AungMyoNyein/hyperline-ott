@@ -1,0 +1,99 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  394.2kB
+
+Step 1/15 : FROM node:22-alpine AS build
+ ---> 1314fb30ec37
+Step 2/15 : WORKDIR /app
+ ---> Using cache
+ ---> b6f7bf40a06b
+Step 3/15 : COPY package*.json ./
+ ---> Using cache
+ ---> 466a47d26b27
+Step 4/15 : RUN npm ci
+ ---> Using cache
+ ---> b295abbab0b7
+Step 5/15 : COPY . .
+ ---> 435e29487c9e
+Step 6/15 : ARG NEXT_PUBLIC_API_URL
+ ---> Running in 22d7018ed00b
+ ---> Removed intermediate container 22d7018ed00b
+ ---> 26fda8afeb11
+Step 7/15 : ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ ---> Running in c437df689d18
+ ---> Removed intermediate container c437df689d18
+ ---> 2501274c536e
+Step 8/15 : RUN npm run build
+ ---> Running in 5efe7befb73d
+
+> build
+> next build
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+   ▲ Next.js 15.5.29
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 59s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/11) ...
+   Generating static pages (2/11)
+   Generating static pages (5/11)
+   Generating static pages (8/11)
+ ✓ Generating static pages (11/11)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    3.19 kB         119 kB
+├ ○ /_not-found                            991 B         104 kB
+├ ○ /genres                              1.96 kB         108 kB
+├ ƒ /login                               2.88 kB         109 kB
+├ ○ /movies                              2.24 kB         118 kB
+├ ƒ /movies/[slug]                       4.23 kB         116 kB
+├ ○ /my-list                             3.78 kB         115 kB
+├ ○ /search                              1.23 kB         117 kB
+├ ○ /series                                831 B         116 kB
+├ ƒ /series/[slug]                        4.9 kB         116 kB
+└ ƒ /watch                                7.4 kB         114 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/255-73938ce8a8eac1ad.js       46.6 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)          2.04 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+ ---> Removed intermediate container 5efe7befb73d
+ ---> 7c4fc6dc1670
+Step 9/15 : FROM node:22-alpine
+ ---> 1314fb30ec37
+Step 10/15 : WORKDIR /app
+ ---> Using cache
+ ---> b6f7bf40a06b
+Step 11/15 : ENV NODE_ENV=production
+ ---> Using cache
+ ---> 3667c679099a
+Step 12/15 : COPY --from=build /app ./
+ ---> eb56d3892b2e
+Step 13/15 : EXPOSE 3000
+ ---> Running in c2fdf624ca66
+ ---> Removed intermediate container c2fdf624ca66
+ ---> 04ab879d727d
+Step 14/15 : CMD ["npm", "run", "start"]
+ ---> Running in 684d6cdc7495
+ ---> Removed intermediate container 684d6cdc7495
+ ---> 60c63a8f140e
+Step 15/15 : LABEL org.opencontainers.image.revision=391916b4f964b23e82b9eb91ef31551f7ff79686
+ ---> Running in 5eddaf41b80c
+ ---> Removed intermediate container 5eddaf41b80c
+ ---> 84e947abd96a
+Successfully built 84e947abd96a
+Successfully tagged hyperline-web:genre-cms-20261122T150019Z-391916b4f964

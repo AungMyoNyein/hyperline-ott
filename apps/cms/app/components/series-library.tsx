@@ -5,14 +5,18 @@ import {
   ApiError,
   errorText,
   Episode,
+  Genre,
   Page,
   Season,
   Series,
   Source,
 } from "../../lib/api";
 
+import ArtworkPreview from "./artwork-preview";
+
 type Props = {
   token: string;
+  genres: Genre[];
 };
 type SeriesDraft = {
   title: string;
@@ -25,6 +29,7 @@ type SeriesDraft = {
   backdrop_url: string;
   featured: boolean;
   published: boolean;
+  genres: string[];
 };
 type SeasonDraft = {
   season_number: string;
@@ -52,6 +57,7 @@ const blankSeries = (): SeriesDraft => ({
   release_year: "",
   poster_url: "",
   backdrop_url: "",
+  genres: [],
   featured: false,
   published: false,
 });
@@ -108,7 +114,7 @@ function seasonName(seasonNumber: number, title: string | null): string {
  * editor, season manager and episode editor. All writes go through the
  * nested admin endpoints; mismatched identifiers 404 server-side.
  */
-export default function SeriesLibrary({ token }: Props) {
+export default function SeriesLibrary({ token, genres }: Props) {
   const [seriesList, setSeriesList] = useState<Series[]>([]);
   const [page, setPage] = useState(1);
   const [last, setLast] = useState(1);
@@ -280,6 +286,7 @@ export default function SeriesLibrary({ token }: Props) {
       release_year: d.release_year ? Number(d.release_year) : null,
       poster_url: d.poster_url || null,
       backdrop_url: d.backdrop_url || null,
+      genres: d.genres,
       featured: d.featured,
       published: d.published,
     };
@@ -641,6 +648,43 @@ export default function SeriesLibrary({ token }: Props) {
                 </label>
               ))}
             </div>
+            <fieldset>
+              <legend>Genres</legend>
+              <div className="checks">
+                {genres.map((g) => (
+                  <label key={g.id}>
+                    <input
+                      type="checkbox"
+                      checked={seriesForm.draft.genres.includes(g.slug)}
+                      onChange={(e) =>
+                        setSeriesForm((f) =>
+                          f
+                            ? {
+                                ...f,
+                                draft: {
+                                  ...f.draft,
+                                  genres: e.target.checked
+                                    ? [...f.draft.genres, g.slug]
+                                    : f.draft.genres.filter(
+                                        (slug) => slug !== g.slug,
+                                      ),
+                                },
+                              }
+                            : f,
+                        )
+                      }
+                    />
+                    {g.name}
+                    {g.name_my && <span lang="my"> · {g.name_my}</span>}
+                    {g.enabled === false ? " (disabled)" : ""}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <ArtworkPreview
+              poster={seriesForm.draft.poster_url}
+              backdrop={seriesForm.draft.backdrop_url}
+            />
             <label htmlFor="series-synopsis">Synopsis</label>
             <textarea
               id="series-synopsis"
@@ -742,6 +786,7 @@ export default function SeriesLibrary({ token }: Props) {
                     release_year: s.release_year ? String(s.release_year) : "",
                     poster_url: s.poster_url || "",
                     backdrop_url: s.backdrop_url || "",
+                    genres: (s.genres || []).map((g) => g.slug),
                     featured: !!s.featured,
                     published: !!s.published,
                   };

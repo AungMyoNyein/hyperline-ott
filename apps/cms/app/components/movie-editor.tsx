@@ -141,6 +141,8 @@ export default function MovieEditor({
                     }
                   />
                   {g.name}
+                  {g.name_my && <span lang="my"> · {g.name_my}</span>}
+                  {g.enabled === false ? " (disabled)" : ""}
                 </label>
               ))
             ) : (

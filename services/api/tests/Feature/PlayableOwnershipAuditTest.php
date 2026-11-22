@@ -19,7 +19,7 @@ class PlayableOwnershipAuditTest extends TestCase
 
         $this->assertSame(0, $exit);
         $this->assertTrue($report['ok']);
-        $this->assertSame(13, $report['migrations_applied']);
+        $this->assertSame(count(glob(database_path('migrations/*.php'))), $report['migrations_applied']);
         $this->assertSame(['ownerless' => 0, 'dual_owner' => 0], $report['violations']['video_sources']);
         $this->assertSame(['missing_season' => 0, 'season_series_mismatch' => 0], $report['violations']['series_episodes']);
     }

@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "source_commit": "fe227e952d90c3fec33135d17a370c65f76d44b8",
+  "images": {
+    "web": "sha256:b034610479a96457a220619e468223786a90cf900dbcb80125cd8cddfd62dff2",
+    "cms": "sha256:a5a503f06f212b6e189f1d8e37d7567320485f784999b1d79797cf462b16e54e"
+  },
+  "test_sha256": "bb64e61814e05e5cc7aceda49e7291be729778b41af5d57b95dc4570801391ce",
+  "browser_tests_passed": 5,
+  "axe_page_scans": 40,
+  "viewports": [
+    360,
+    390,
+    768,
+    1366,
+    1920
+  ],
+  "screenshots": 40,
+  "live_api_requests_forwarded_to_local_fixture": true,
+  "runtime_unchanged": true,
+  "temporary_containers_removed": true,
+  "deployed": false
+}

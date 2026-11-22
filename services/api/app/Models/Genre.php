@@ -16,6 +16,9 @@ class Genre extends Model
     protected $fillable = [
         'name',
         'slug',
+        'name_my',
+        'enabled',
+        'sort_order',
     ];
 
     protected static function booted(): void
@@ -25,6 +28,16 @@ class Genre extends Model
                 $genre->slug = Str::slug((string) $genre->name);
             }
         });
+    }
+
+    protected function casts(): array
+    {
+        return ['enabled' => 'boolean', 'sort_order' => 'integer'];
+    }
+
+    public function series(): BelongsToMany
+    {
+        return $this->belongsToMany(Series::class, 'series_genre');
     }
 
     public function movies(): BelongsToMany

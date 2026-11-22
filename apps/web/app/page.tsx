@@ -6,6 +6,7 @@ import {
   ContinueWatchingItem,
   errorText,
   Movie,
+  Genre,
   Series,
 } from "../lib/api";
 import { ContinueWatchingRow, MovieRow, SeriesRow } from "./cards";
@@ -15,6 +16,8 @@ import { ErrorState, Skeleton } from "./components/ui";
 import { contentLang } from "./components/content-language";
 type Home = {
   hero: Movie | null;
+  section_order?: string[];
+  genres?: Genre[];
   featured: Movie[];
   trending: Movie[];
   latest: Movie[];
@@ -111,7 +114,7 @@ export default function HomePage() {
                       : "/movies"
                   }
                 >
-                  {hero ? "More info" : "Explore movies"}{" "}
+                  {hero ? "Details" : "Explore movies"}{" "}
                   <span aria-hidden="true">↗</span>
                 </Link>
                 {!hero && (
@@ -134,35 +137,109 @@ export default function HomePage() {
             <span>YOUR WORLD. YOUR STORIES.</span>
             <span className="muted">Cinema, series & a little escape.</span>
           </div>
-          {token && data.continue_watching.length > 0 && (
-            <ContinueWatchingRow items={data.continue_watching} />
-          )}
-          <MovieRow title="Trending now" movies={data.trending} />
-          <MovieRow title="Latest movies" movies={data.latest} />
-          <SeriesRow
-            title="Discover series"
-            series={(data.series || []).filter(
-              (s) => s.category !== "vertical",
-            )}
-          />
-          <section className="vertical-banner">
-            <div>
-              <p className="eyebrow">A DIFFERENT PERSPECTIVE</p>
-              <h2>
-                Short episodes.
-                <br />
-                Stories that pull you in.
-              </h2>
-              <p className="muted">
-                Discover vertical dramas, made for the way you watch.
-              </p>
-            </div>
-            <span className="vertical-mark" aria-hidden="true">
-              9<span>:</span>16
-            </span>
-          </section>
-          <SeriesRow title="Vertical dramas" series={vertical} />
-          <MovieRow title="Featured movies" movies={data.featured} />
+          {(
+            data.section_order || [
+              "continue",
+              "trending",
+              "latest",
+              "genres",
+              "series",
+              "vertical",
+              "featured",
+            ]
+          ).map((section) => {
+            // Hide any row fully covered by earlier movie rows, including
+            // featured subsets in a small catalog. Keep partially new rows.
+            const duplicate = (movies: Movie[], prior: Movie[][]) => {
+              const seen = new Set(
+                prior.flatMap((row) => row.map((m) => m.id)),
+              );
+              return movies.every((movie) => seen.has(movie.id));
+            };
+            const order = data.section_order || [
+              "continue",
+              "trending",
+              "latest",
+              "genres",
+              "series",
+              "vertical",
+              "featured",
+            ];
+            const movieRows: Record<
+              string,
+              { title: string; movies: Movie[] }
+            > = {
+              trending: { title: "Trending now", movies: data.trending },
+              latest: { title: "Latest movies", movies: data.latest },
+              featured: { title: "Featured movies", movies: data.featured },
+            };
+            const row = movieRows[section];
+            if (row) {
+              const prior = order
+                .slice(0, order.indexOf(section))
+                .filter((key) => movieRows[key])
+                .map((key) => movieRows[key].movies);
+              return !row.movies.length ||
+                duplicate(row.movies, prior) ? null : (
+                <MovieRow key={section} title={row.title} movies={row.movies} />
+              );
+            }
+            if (section === "continue")
+              return token && data.continue_watching.length ? (
+                <ContinueWatchingRow
+                  key={section}
+                  items={data.continue_watching}
+                />
+              ) : null;
+            if (section === "genres")
+              return (data.genres || []).some((g) => !!g.movies_count) ? (
+                <section
+                  key={section}
+                  className="genre-discovery"
+                  aria-label="Movies by genre"
+                >
+                  <h2>Movies by genre</h2>
+                  <div className="genre-links">
+                    {data.genres
+                      ?.filter((g) => !!g.movies_count)
+                      .map((g) => (
+                        <Link
+                          key={g.id}
+                          className="button secondary"
+                          href={`/movies?genre=${encodeURIComponent(g.slug)}`}
+                        >
+                          {g.name}
+                          {g.name_my && (
+                            <span lang="my"> · {g.name_my}</span>
+                          )}{" "}
+                          <span className="muted">({g.movies_count})</span>
+                        </Link>
+                      ))}
+                  </div>
+                </section>
+              ) : null;
+            if (section === "series") {
+              const series = (data.series || []).filter(
+                (s) => s.category !== "vertical",
+              );
+              return series.length ? (
+                <SeriesRow
+                  key={section}
+                  title="Discover series"
+                  series={series}
+                />
+              ) : null;
+            }
+            if (section === "vertical")
+              return vertical.length ? (
+                <SeriesRow
+                  key={section}
+                  title="Vertical dramas"
+                  series={vertical}
+                />
+              ) : null;
+            return null;
+          })}
         </>
       )}
     </main>
