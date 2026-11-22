@@ -25,7 +25,7 @@ async function openMovie(
   await page.getByLabel("Search movies").fill(search);
   await page.getByRole("button", { name: "Search", exact: true }).click();
   await page.locator(".card").filter({ hasText: search }).first().click();
-  await page.waitForURL(`${web}/movies/${slug}`);
+  await page.waitForURL((url) => url.pathname === `/movies/${slug}`);
 }
 test("DASH sources play through dash.js with the signed-session transport", async ({
   page,

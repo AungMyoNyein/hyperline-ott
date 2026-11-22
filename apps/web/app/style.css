@@ -12,6 +12,7 @@ body {
   color: var(--text);
   font:
     15px/1.6 Arial,
+    var(--font-myanmar),
     Helvetica,
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -1584,4 +1585,206 @@ footer.site {
   margin-block: 1rem;
   font-size: 0.9rem;
   line-height: 1.6;
+}
+
+/* Movies catalog: compact discovery controls and readable poster cards. */
+.movies-catalog {
+  padding-top: 0;
+}
+.catalog-heading {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 24px;
+}
+.catalog-heading h1 {
+  font-size: clamp(2rem, 3.3vw, 3rem);
+  margin-bottom: 12px;
+}
+.catalog-heading .eyebrow {
+  margin-bottom: 10px;
+}
+.catalog-heading > p:last-child {
+  margin: 0;
+  font-size: 1rem;
+}
+.catalog-toolbar {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--bg-elev);
+  margin-bottom: 20px;
+}
+.catalog-toolbar label {
+  font-size: 0.875rem;
+}
+.catalog-search {
+  flex: 1 1 440px;
+  min-width: 0;
+}
+.catalog-search > label {
+  display: block;
+  margin-bottom: 6px;
+}
+.catalog-search-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.catalog-search-row input {
+  flex: 1 1 160px;
+  min-width: 0;
+  width: auto;
+  background: var(--bg);
+  border-color: var(--line-strong);
+  font-size: 1rem;
+}
+.catalog-search-row button {
+  padding-inline: 16px;
+}
+.catalog-genre {
+  flex: 0 1 190px;
+  min-width: 0;
+}
+.catalog-toolbar .check {
+  min-height: 48px;
+  margin: 0;
+}
+.catalog-toolbar input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+.catalog-toolbar button,
+.catalog-toolbar select,
+.catalog-toolbar input[type="search"] {
+  min-height: 48px;
+}
+.catalog-count {
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+.catalog-message {
+  padding: 28px 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg-elev);
+}
+.catalog-message p {
+  font-size: 1rem;
+}
+.catalog-loading {
+  padding: 32px 20px;
+  color: var(--muted);
+}
+.movies-catalog .grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 28px 20px;
+}
+.movies-catalog .card {
+  display: flex;
+  flex-direction: column;
+  transition: none;
+  align-self: start;
+}
+.movies-catalog .artwork-poster {
+  aspect-ratio: 2 / 3;
+}
+.movies-catalog .artwork[data-youtube-thumbnail="true"] {
+  aspect-ratio: 16 / 9;
+}
+.movies-catalog .card-body {
+  padding: 12px 0 8px;
+}
+.movies-catalog .card-body h3 {
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: normal;
+}
+.movies-catalog .card-body p {
+  font-size: 0.8125rem;
+}
+.movies-catalog .card-type {
+  font-size: 0.75rem;
+}
+.movies-catalog .card-actions {
+  gap: 8px;
+  font-size: 0.875rem;
+  flex-wrap: wrap;
+}
+.movies-catalog .card-actions a {
+  min-height: 44px;
+  flex: 1;
+  justify-content: center;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.movies-catalog .card-reveal {
+  display: none;
+}
+.movies-catalog .artwork img {
+  transition: none;
+}
+.movies-catalog .card:hover .artwork img {
+  transform: none;
+}
+.catalog-back {
+  margin-bottom: 20px;
+}
+:root :lang(my) {
+  font-family: var(--font-myanmar), Arial, "Myanmar Text", Padauk, sans-serif;
+  letter-spacing: normal;
+  line-height: 1.8;
+}
+@media (min-width: 1600px) {
+  .movies-catalog .grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1000px) {
+  .movies-catalog .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px 16px;
+  }
+}
+@media (max-width: 600px) {
+  .catalog-heading {
+    min-height: 140px;
+    padding-block: 20px;
+  }
+  .catalog-heading h1 {
+    font-size: 1.8rem;
+  }
+  .catalog-heading > p:last-child {
+    font-size: 0.875rem;
+  }
+  .catalog-toolbar {
+    padding: 14px;
+    gap: 12px;
+  }
+  .catalog-search {
+    flex-basis: 100%;
+  }
+  .catalog-search-row input {
+    flex-basis: 130px;
+  }
+  .catalog-search-row button {
+    padding-inline: 12px;
+  }
+  .catalog-genre {
+    flex: 1 1 100%;
+  }
+  .movies-catalog .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 14px;
+  }
+  .movies-catalog .card-actions a {
+    gap: 4px;
+    padding-inline: 4px;
+  }
 }

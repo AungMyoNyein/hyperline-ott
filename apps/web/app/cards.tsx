@@ -1,14 +1,22 @@
+import { contentLang } from "./components/content-language";
 import Link from "next/link";
 import { ContinueWatchingItem, isEpisodeRow, Movie, Series } from "../lib/api";
 import Artwork from "./components/artwork";
 import Rail from "./components/rail";
 import { Progress } from "./components/ui";
 import YouTubeAttributionView from "./components/youtube-attribution";
-function MovieCard({ movie: m }: { movie: Movie }) {
+function MovieCard({
+  movie: m,
+  catalogHref,
+}: {
+  movie: Movie;
+  catalogHref?: string;
+}) {
+  const detailsHref = `/movies/${encodeURIComponent(m.slug)}${catalogHref ? `?from=${encodeURIComponent(catalogHref)}` : ""}`;
   return (
     <article className="card">
       <Link
-        href={`/movies/${encodeURIComponent(m.slug)}`}
+        href={detailsHref}
         className="card-main"
         aria-label={`${m.title} — details`}
       >
@@ -20,7 +28,7 @@ function MovieCard({ movie: m }: { movie: Movie }) {
           </span>
         </div>
         <div className="card-body">
-          <h3>{m.title}</h3>
+          <h3 lang={contentLang(m.title)}>{m.title}</h3>
           <YouTubeAttributionView attribution={m.youtube} compact />
           <p className="muted">
             {[
@@ -39,7 +47,7 @@ function MovieCard({ movie: m }: { movie: Movie }) {
             Watch <span aria-hidden="true">▷</span>
           </Link>
         )}
-        <Link href={`/movies/${encodeURIComponent(m.slug)}`}>
+        <Link href={detailsHref}>
           Details <span aria-hidden="true">↗</span>
         </Link>
       </div>
@@ -90,13 +98,19 @@ function SeriesCard({ series: s }: { series: Series }) {
     </article>
   );
 }
-export function Cards({ movies }: { movies: Movie[] }) {
+export function Cards({
+  movies,
+  catalogHref,
+}: {
+  movies: Movie[];
+  catalogHref?: string;
+}) {
   return (
     <div className="grid">
       {movies
         .filter((m) => m.published !== false)
         .map((m) => (
-          <MovieCard key={m.id} movie={m} />
+          <MovieCard key={m.id} movie={m} catalogHref={catalogHref} />
         ))}
     </div>
   );

@@ -1,4 +1,5 @@
 "use client";
+import { contentLang } from "../../components/content-language";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api, errorText, Movie, ProgressRow } from "../../../lib/api";
@@ -6,7 +7,13 @@ import { useSession } from "../../session";
 import Artwork from "../../components/artwork";
 import { ErrorState, Skeleton } from "../../components/ui";
 import YouTubeAttributionView from "../../components/youtube-attribution";
-export default function Detail({ slug }: { slug: string }) {
+export default function Detail({
+  slug,
+  backHref = "/movies",
+}: {
+  slug: string;
+  backHref?: string;
+}) {
   const { token } = useSession();
   const [position, setPosition] = useState(0);
   useEffect(() => {
@@ -58,6 +65,9 @@ export default function Detail({ slug }: { slug: string }) {
   }
   return (
     <main>
+      <Link className="button secondary catalog-back" href={backHref}>
+        Back to movies
+      </Link>
       {error ? (
         <ErrorState message={error} />
       ) : !movie ? (
@@ -78,7 +88,7 @@ export default function Detail({ slug }: { slug: string }) {
               <p className="eyebrow">
                 {movie.featured ? "FEATURED MOVIE" : "HYPERLINE MOVIES"}
               </p>
-              <h1>{movie.title}</h1>
+              <h1 lang={contentLang(movie.title)}>{movie.title}</h1>
               <YouTubeAttributionView attribution={movie.youtube} />
               <p className="muted">
                 {movie.release_year}{" "}
@@ -96,7 +106,7 @@ export default function Detail({ slug }: { slug: string }) {
                   </Link>
                 ))}
               </div>
-              <p className="synopsis">
+              <p className="synopsis" lang={contentLang(movie.synopsis)}>
                 {movie.synopsis || "A new story awaits."}
               </p>
               <div className="detail-actions">
