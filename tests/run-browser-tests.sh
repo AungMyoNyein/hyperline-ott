@@ -26,6 +26,7 @@ ISOLATE
 fi
 python3 - <<'PY'
 import socket
+from pathlib import Path
 for port in (18081,18082,18083,18084):
     with socket.socket() as sock:
         sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
@@ -33,6 +34,8 @@ for port in (18081,18082,18083,18084):
             sock.bind(('127.0.0.1',port))
         except OSError:
             raise SystemExit(f'Test port {port} is busy; stop only the corresponding test server first.')
+# A cancelled negative-CORS test must not poison the next fixture run.
+Path('/tmp/hyperline-test-media/block-cors').unlink(missing_ok=True)
 PY
 export APP_ENV=testing DB_CONNECTION=sqlite
 export DB_DATABASE="$(mktemp /tmp/hyperline-browser-XXXXXX.sqlite)"

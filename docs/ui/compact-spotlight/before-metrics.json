@@ -1,0 +1,177 @@
+[
+  {
+    "name": "home",
+    "width": 360,
+    "height": 800,
+    "hero": {
+      "x": 0,
+      "y": 72,
+      "width": 360,
+      "height": 550
+    },
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 16,
+      "y": 736.71875,
+      "width": 137.59375,
+      "height": 323.609375
+    },
+    "overflow": false
+  },
+  {
+    "name": "movies",
+    "width": 360,
+    "height": 800,
+    "hero": null,
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 20,
+      "y": 497.25,
+      "width": 153,
+      "height": 346.71875
+    },
+    "overflow": false
+  },
+  {
+    "name": "home",
+    "width": 390,
+    "height": 844,
+    "hero": {
+      "x": 0,
+      "y": 72,
+      "width": 390,
+      "height": 550
+    },
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 16,
+      "y": 736.71875,
+      "width": 150.5,
+      "height": 342.96875
+    },
+    "overflow": false
+  },
+  {
+    "name": "movies",
+    "width": 390,
+    "height": 844,
+    "hero": null,
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 20,
+      "y": 497.25,
+      "width": 168,
+      "height": 369.21875
+    },
+    "overflow": false
+  },
+  {
+    "name": "home",
+    "width": 768,
+    "height": 1024,
+    "hero": {
+      "x": 0,
+      "y": 72,
+      "width": 768,
+      "height": 530
+    },
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 32.09375,
+      "y": 760.46875,
+      "width": 160.453125,
+      "height": 359.21875
+    },
+    "overflow": false
+  },
+  {
+    "name": "movies",
+    "width": 768,
+    "height": 1024,
+    "hero": null,
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 36.09375,
+      "y": 378.015625,
+      "width": 160.453125,
+      "height": 359.21875
+    },
+    "overflow": false
+  },
+  {
+    "name": "home",
+    "width": 1366,
+    "height": 768,
+    "hero": {
+      "x": 0,
+      "y": 80,
+      "width": 1366,
+      "height": 610
+    },
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 60.1875,
+      "y": 848.46875,
+      "width": 191.265625,
+      "height": 405.4375
+    },
+    "overflow": false
+  },
+  {
+    "name": "movies",
+    "width": 1366,
+    "height": 768,
+    "hero": null,
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 64.1875,
+      "y": 417.65625,
+      "width": 191.265625,
+      "height": 405.46875
+    },
+    "overflow": false
+  },
+  {
+    "name": "home",
+    "width": 1920,
+    "height": 1080,
+    "hero": {
+      "x": 0,
+      "y": 80,
+      "width": 1920,
+      "height": 680
+    },
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 86,
+      "y": 918.46875,
+      "width": 201.75,
+      "height": 421.171875
+    },
+    "overflow": false
+  },
+  {
+    "name": "movies",
+    "width": 1920,
+    "height": 1080,
+    "hero": null,
+    "heading": null,
+    "toolbar": null,
+    "firstCard": {
+      "x": 210,
+      "y": 418.984375,
+      "width": 235,
+      "height": 471.046875
+    },
+    "overflow": false
+  }
+]

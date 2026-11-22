@@ -1,0 +1,8 @@
+{
+  "services": {
+    "web": {
+      "image": "sha256:9a6c0876f46fbfbbe4de5da084f6a44bb90b48ba5db2441414bbdd89ae8b7666",
+      "pull_policy": "never"
+    }
+  }
+}

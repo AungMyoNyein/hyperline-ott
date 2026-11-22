@@ -1,0 +1,7 @@
+{
+  "source_commit": "edb8b98bd846c38f74ff1929efb66a5b67d5c034",
+  "verified_source_files": 60,
+  "web_build_id": "vkJVbx9G06CjvQGeoOvp0",
+  "cms_build_id": "6NpgpfsApCLA0mVpQX_Bm",
+  "method": "Reuse the verified production builds; create a fresh temporary fixture database and compare snapshots without updates."
+}

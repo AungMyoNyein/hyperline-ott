@@ -1,0 +1,39 @@
+{
+  "source_commit": "edb8b98bd846c38f74ff1929efb66a5b67d5c034",
+  "typescript": "passed",
+  "lint": "passed",
+  "browser_test_typescript": "passed",
+  "web_production_build": "passed",
+  "cms_production_build": "passed",
+  "browser_regression": {
+    "passed": 63,
+    "skipped": 3,
+    "failed": 0,
+    "movies_tests_passed": 10,
+    "compact_tests_passed": 7,
+    "skips": [
+      "optional CDN fixture",
+      "optional imported catalog CSV",
+      "live third-party YouTube playback"
+    ]
+  },
+  "image_smoke": {
+    "passed": 7,
+    "failed": 0,
+    "axe_scans": 10,
+    "violations": 0
+  },
+  "dependency_audits": {
+    "web_vulnerabilities": 0,
+    "cms_vulnerabilities": 0
+  },
+  "viewports": [
+    360,
+    390,
+    768,
+    1366,
+    1920
+  ],
+  "screenshots": 20,
+  "deployed": false
+}

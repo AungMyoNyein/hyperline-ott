@@ -1,0 +1,113 @@
+
+   INFO  Preparing database.
+
+  Creating migration table ...................................... 11.46ms DONE
+
+   INFO  Running migrations.
+
+  0001_01_01_000000_create_users_table .......................... 13.44ms DONE
+  0001_01_01_000001_create_cache_table ........................... 9.14ms DONE
+  0001_01_01_000002_create_jobs_table ........................... 12.02ms DONE
+  2026_11_08_000100_create_rbac_tables .......................... 22.56ms DONE
+  2026_11_08_000200_add_ott_fields_to_users_table ................ 8.60ms DONE
+  2026_11_08_000300_create_catalog_tables ....................... 21.40ms DONE
+  2026_11_08_000400_create_viewer_tables ........................ 21.19ms DONE
+  2026_11_08_000500_create_admin_audit_logs_table ................ 7.77ms DONE
+  2026_11_08_124741_create_personal_access_tokens_table .......... 7.39ms DONE
+  2026_11_10_000100_create_series_tables ........................ 97.73ms DONE
+  2026_11_10_120000_add_seasons_and_series_genres ............... 63.06ms DONE
+  2026_11_10_120100_add_episode_watch_progress .................. 33.02ms DONE
+  2026_11_10_120200_add_playable_owner_checks ................... 31.29ms DONE
+
+
+> build
+> next build
+
+   ▲ Next.js 15.5.29
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 27.9s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/11) ...
+   Generating static pages (2/11)
+   Generating static pages (5/11)
+   Generating static pages (8/11)
+ ✓ Generating static pages (11/11)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    2.99 kB         118 kB
+├ ○ /_not-found                            989 B         104 kB
+├ ○ /genres                              1.96 kB         108 kB
+├ ƒ /login                               2.91 kB         109 kB
+├ ○ /movies                              2.25 kB         118 kB
+├ ƒ /movies/[slug]                       4.25 kB         116 kB
+├ ○ /my-list                             3.76 kB         115 kB
+├ ○ /search                              1.23 kB         117 kB
+├ ○ /series                                835 B         116 kB
+├ ƒ /series/[slug]                        4.9 kB         116 kB
+└ ƒ /watch                               7.41 kB         114 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/937-4fc255339cc34134.js       46.6 kB
+  ├ chunks/daf3b4e7-7856fc537451f355.js  54.2 kB
+  └ other shared chunks (total)          2.04 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+> build
+> next build
+
+   ▲ Next.js 15.5.29
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 21.0s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/4) ...
+   Generating static pages (1/4)
+   Generating static pages (2/4)
+   Generating static pages (3/4)
+ ✓ Generating static pages (4/4)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    11.2 kB         113 kB
+└ ○ /_not-found                            990 B         103 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/5275c05d-bcb9402763fe9872.js  54.2 kB
+  ├ chunks/828-b899b4631547c089.js         46 kB
+  └ other shared chunks (total)           1.9 kB
+
+
+○  (Static)  prerendered as static content
+
+
+> test:e2e
+> playwright test premium-visual.spec.ts --update-snapshots
+
+
+Running 11 tests using 1 worker
+
+(node:1301481) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+/opt/hyperline-ott/docs/ui/screenshots/after-catalog-desktop.png is re-generated, writing actual.
+  ✓   1 ../../tests/e2e/premium-visual.spec.ts:239:3 › visual major pages desktop (16.9s)
+/opt/hyperline-ott/docs/ui/screenshots/after-catalog-mobile.png is re-generated, writing actual.
+  ✓   2 ../../tests/e2e/premium-visual.spec.ts:239:3 › visual major pages mobile (11.6s)
+  ✓   3 ../../tests/e2e/premium-visual.spec.ts:277:3 › responsive pages fit 360px (8.7s)
+  ✓   4 ../../tests/e2e/premium-visual.spec.ts:277:3 › responsive pages fit 390px (8.5s)
+  ✓   5 ../../tests/e2e/premium-visual.spec.ts:277:3 › responsive pages fit 768px (8.4s)
+  ✓   6 ../../tests/e2e/premium-visual.spec.ts:277:3 › responsive pages fit 1366px (7.8s)
+  ✓   7 ../../tests/e2e/premium-visual.spec.ts:277:3 › responsive pages fit 1920px (9.8s)
+  ✓   8 ../../tests/e2e/premium-visual.spec.ts:312:1 › branded fallback, keyboard navigation, mobile menu and reduced motion (1.9s)
+  ✓   9 ../../tests/e2e/premium-visual.spec.ts:340:1 › authenticated player fails closed without fetching media; seasons and search navigate (7.5s)
+  ✓  10 ../../tests/e2e/premium-visual.spec.ts:387:1 › CMS delete confirmation traps focus, cancels safely, and preserves unsaved changes across sections (3.2s)
+  ✓  11 ../../tests/e2e/premium-visual.spec.ts:425:1 › failed artwork falls back without an application image proxy (1.9s)
+
+  11 passed (1.5m)
