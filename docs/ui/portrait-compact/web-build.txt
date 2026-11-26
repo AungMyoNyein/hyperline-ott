@@ -1,0 +1,71 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon    396kB
+Step 1/6 : FROM sha256:b034610479a96457a220619e468223786a90cf900dbcb80125cd8cddfd62dff2
+ ---> b034610479a9
+Step 2/6 : WORKDIR /app
+ ---> Running in 37f39d271a14
+ ---> Removed intermediate container 37f39d271a14
+ ---> a7e72bd8052c
+Step 3/6 : COPY . .
+ ---> 506aa95b3122
+Step 4/6 : ARG NEXT_PUBLIC_API_URL
+ ---> Running in 00d732fd4a11
+ ---> Removed intermediate container 00d732fd4a11
+ ---> 9439a9338ac2
+Step 5/6 : RUN rm -rf .next && NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL npm run build
+ ---> Running in c15932c5f5eb
+
+> build
+> next build
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+   ▲ Next.js 15.5.29
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 32.4s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/11) ...
+   Generating static pages (2/11) 
+   Generating static pages (5/11) 
+   Generating static pages (8/11) 
+ ✓ Generating static pages (11/11)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    3.21 kB         119 kB
+├ ○ /_not-found                            991 B         104 kB
+├ ○ /genres                              1.96 kB         108 kB
+├ ƒ /login                               2.88 kB         109 kB
+├ ○ /movies                              2.24 kB         118 kB
+├ ƒ /movies/[slug]                       4.34 kB         116 kB
+├ ○ /my-list                             4.05 kB         116 kB
+├ ○ /search                              1.23 kB         117 kB
+├ ○ /series                                831 B         116 kB
+├ ƒ /series/[slug]                          5 kB         117 kB
+└ ƒ /watch                                7.4 kB         114 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/255-73938ce8a8eac1ad.js       46.6 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)          2.04 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+ ---> Removed intermediate container c15932c5f5eb
+ ---> 9b515e38cc8d
+Step 6/6 : LABEL org.opencontainers.image.revision=e66a301325b6462cc0b74132d4b13f158eee9880
+ ---> Running in dd97f22e7674
+ ---> Removed intermediate container dd97f22e7674
+ ---> 78d8b736e6b4
+Successfully built 78d8b736e6b4
+Successfully tagged hyperline-web:portrait-compact-20261126T163444Z-e66a301325b6

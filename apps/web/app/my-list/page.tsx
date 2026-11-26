@@ -5,6 +5,7 @@ import { api, errorText, Movie, Page } from "../../lib/api";
 import { useSession } from "../session";
 import Artwork from "../components/artwork";
 import { Skeleton, EmptyState } from "../components/ui";
+import { contentLang } from "../components/content-language";
 export default function MyList() {
   const { token } = useSession();
   const [rows, setRows] = useState<
@@ -85,11 +86,23 @@ export default function MyList() {
                 <article className="saved-movie" key={row.id}>
                   <Link href={`/movies/${row.movie.slug}`}>
                     <Artwork
-                      src={row.movie.poster_url}
+                      src={row.movie.poster_url || row.movie.backdrop_url}
                       title={row.movie.title}
                     />
-                    <h2>{row.movie.title}</h2>
+                    <h2 lang={contentLang(row.movie.title)}>
+                      {row.movie.title}
+                    </h2>
                   </Link>
+                  <div className="card-actions">
+                    {row.movie.playable && (
+                      <Link href={`/watch?id=${row.movie.id}`}>Watch</Link>
+                    )}
+                    <Link
+                      href={`/movies/${encodeURIComponent(row.movie.slug)}`}
+                    >
+                      Details
+                    </Link>
+                  </div>
                   <button
                     disabled={busy}
                     onClick={() => remove(row.movie)}

@@ -1,0 +1,20 @@
+{
+  "verified_utc": "2026-11-26T16:56:36.201454+00:00",
+  "ready_for_review": true,
+  "deployed": false,
+  "activation_authorized": false,
+  "runtime_unchanged": true,
+  "catalog_unchanged": true,
+  "live_migrations_unchanged": 14,
+  "https": {
+    "https://api.zentunnel.net/api/v1/health": 200,
+    "https://ott.zentunnel.net/": 200,
+    "https://cms.zentunnel.net/": 200
+  },
+  "browser_tests_passed": 75,
+  "browser_tests_skipped": 3,
+  "candidate_image_smoke_passed": true,
+  "rollback_images_available": true,
+  "frontend_git_trees_match_current_head": true,
+  "source_commit": "e66a301325b6462cc0b74132d4b13f158eee9880"
+}

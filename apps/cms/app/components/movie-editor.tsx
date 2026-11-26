@@ -60,8 +60,8 @@ export default function MovieEditor({
                     slug: "Slug (optional on create)",
                     release_year: "Release year",
                     duration_minutes: "Duration (minutes)",
-                    poster_url: "Poster HTTPS URL",
-                    backdrop_url: "Backdrop HTTPS URL",
+                    poster_url: "Portrait poster HTTPS URL · 2:3",
+                    backdrop_url: "Landscape backdrop HTTPS URL · 16:9",
                   }[k]
                 }
                 <input
@@ -73,8 +73,8 @@ export default function MovieEditor({
                       slug: "Slug (optional on create)",
                       release_year: "Release year",
                       duration_minutes: "Duration (minutes)",
-                      poster_url: "Poster HTTPS URL",
-                      backdrop_url: "Backdrop HTTPS URL",
+                      poster_url: "Portrait poster HTTPS URL · 2:3",
+                      backdrop_url: "Landscape backdrop HTTPS URL · 16:9",
                     }[k]
                   }
                   value={draft[k]}

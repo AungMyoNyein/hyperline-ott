@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "source_commit": "e66a301325b6462cc0b74132d4b13f158eee9880",
+  "images": {
+    "web": "sha256:78d8b736e6b43db61bda002922bba32191c4a9b4b56d8c82d2b456501c2fcb1c",
+    "cms": "sha256:1d5ccc789aede1407326aea20966364831d4bad90eed631a4dd1d29766cb3a79"
+  },
+  "runtime_unchanged": true,
+  "uat_writes": false,
+  "disposable_fixture_only": true
+}

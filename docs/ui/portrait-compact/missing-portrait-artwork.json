@@ -1,0 +1,163 @@
+{
+  "read_only": true,
+  "artwork_urls_changed": false,
+  "movies": [
+    {
+      "id": 4,
+      "title": "ဗေဒါ",
+      "portrait_review": "portrait present: 2:3 ratio review required; original asset retained",
+      "browser_dimensions": {
+        "width": 356,
+        "height": 498
+      },
+      "source_aspect_ratio": 0.714859437751004
+    },
+    {
+      "id": 5,
+      "title": "အဝိဇ္ဇာကမ်းပါး",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 6,
+      "title": "အသည်းနုသည်ဖြေးဖြေးမုန်း",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 7,
+      "title": "အနာဂတ်ရဲ့ ကြယ်ပွင့်များ",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 8,
+      "title": "ပွစိလန်",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 9,
+      "title": "မိုက်ခဲချစ်ညိုရွှေဘိုဇာတိ",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 10,
+      "title": "အမေများရဲ့ကောင်းကင်",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 11,
+      "title": "ရီဝေဝေမိုး",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 12,
+      "title": "ကြောင်တစ်ရာဗိုလ်",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 13,
+      "title": "နှောင်ကြိုးဝိုင်း",
+      "portrait_review": "portrait present: 2:3 ratio review required; original asset retained",
+      "browser_dimensions": {
+        "width": 1080,
+        "height": 1920
+      },
+      "source_aspect_ratio": 0.5625
+    },
+    {
+      "id": 14,
+      "title": "စုန်ရေ၏စီးသံ",
+      "portrait_review": "portrait present: 2:3 ratio review required; original asset retained",
+      "browser_dimensions": {
+        "width": 356,
+        "height": 498
+      },
+      "source_aspect_ratio": 0.714859437751004
+    },
+    {
+      "id": 15,
+      "title": "လန်းချက်ကကမ်းကုန်",
+      "portrait_review": "portrait present: 2:3 ratio review required; original asset retained",
+      "browser_dimensions": {
+        "width": 356,
+        "height": 498
+      },
+      "source_aspect_ratio": 0.714859437751004
+    },
+    {
+      "id": 16,
+      "title": "နိုင်တဲ့လူအကုန်ယူကြေး(၂)",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 17,
+      "title": "ချက်ကြီးနှင့်အက်(စ်)အီး",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 18,
+      "title": "အဖမဲ့သား",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 19,
+      "title": "မယားဆိုး",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 20,
+      "title": "ကြိုးဝိုင်းထဲကသံယောဇဉ်",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 21,
+      "title": "အရိပ်နောက်မှာ",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 22,
+      "title": "မိုးခါးရေမသောက်တဲ့လူ",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 23,
+      "title": "အကြမ်းဇယား",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 24,
+      "title": "ဖောက်ပြန်ကြသူများ",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 25,
+      "title": "အစမ်းသပ်ခံအချစ်",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 26,
+      "title": "ဦးဖိုးချမ်းနဲ့သော့တွဲကြီး",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 27,
+      "title": "နိူးထခွင့်",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 28,
+      "title": "အသည်းဖျက်လျော်ကြေး",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    },
+    {
+      "id": 29,
+      "title": "ကောင်းကင်ငိုသံ",
+      "portrait_review": "missing: landscape YouTube thumbnail"
+    }
+  ],
+  "summary": {
+    "missing_portraits": 22,
+    "existing_portraits_needing_ratio_review": 4,
+    "verified_2_3_portraits": 0
+  },
+  "standalone_assets_downloaded": false,
+  "browser_original_origin_previews_only": true
+}

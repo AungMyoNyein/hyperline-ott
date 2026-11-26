@@ -1,0 +1,92 @@
+{
+  "source_commit": "e66a301325b6462cc0b74132d4b13f158eee9880",
+  "baseline_commit": "ca37ed304459c565fabe25c90545152d8ec564d3",
+  "source_archive_sha256": "9da99116145a553f6bb0bcebcf768d82a5618c9c7a2ac2dd9640f8fafbb8434d",
+  "images": {
+    "web": {
+      "image_id": "sha256:78d8b736e6b43db61bda002922bba32191c4a9b4b56d8c82d2b456501c2fcb1c",
+      "tag": "hyperline-web:portrait-compact-20261126T163444Z-e66a301325b6",
+      "tree": "061a953ae7f4eaac2a425e7aa14393f23acab197",
+      "source_commit": "e66a301325b6462cc0b74132d4b13f158eee9880",
+      "dependency_base_image": "sha256:b034610479a96457a220619e468223786a90cf900dbcb80125cd8cddfd62dff2"
+    },
+    "cms": {
+      "image_id": "sha256:1d5ccc789aede1407326aea20966364831d4bad90eed631a4dd1d29766cb3a79",
+      "tag": "hyperline-cms:portrait-compact-20261126T163444Z-e66a301325b6",
+      "tree": "305da9a2c8710c29c2d1982d56c49563e5cc12fe",
+      "source_commit": "e66a301325b6462cc0b74132d4b13f158eee9880",
+      "dependency_base_image": "sha256:a5a503f06f212b6e189f1d8e37d7567320485f784999b1d79797cf462b16e54e"
+    },
+    "api": {
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "reused_unchanged": true,
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982"
+    },
+    "worker": {
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "reused_unchanged": true,
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982"
+    },
+    "scheduler": {
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "reused_unchanged": true,
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982"
+    }
+  },
+  "runtime_before": {
+    "api": {
+      "container_id": "01d6fa6db48322451d5540c9ed104795bb091046cf8c1aa7212ff509a80d4342",
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "started_at": "2026-11-26T16:06:25.648670247Z",
+      "frontend_ip": "172.20.0.2"
+    },
+    "web": {
+      "container_id": "9267fbbd6a13bb928d40ee0ef483329654567f3366382cd93cf415d9d8b739d8",
+      "image_id": "sha256:b034610479a96457a220619e468223786a90cf900dbcb80125cd8cddfd62dff2",
+      "started_at": "2026-11-26T16:06:32.698233647Z",
+      "frontend_ip": "172.20.0.5"
+    },
+    "cms": {
+      "container_id": "61e7e756d589ff112dbdd1c3ae109a728f8a0321f1ed2303d3bee169cf68f246",
+      "image_id": "sha256:a5a503f06f212b6e189f1d8e37d7567320485f784999b1d79797cf462b16e54e",
+      "started_at": "2026-11-26T16:06:32.693696889Z",
+      "frontend_ip": "172.20.0.4"
+    },
+    "worker": {
+      "container_id": "80ee0480b22e8f708e45f854a2a365fdbc87187ac0e03fb39ed33412d2189664",
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "started_at": "2026-11-26T16:06:39.504929004Z",
+      "frontend_ip": null
+    },
+    "scheduler": {
+      "container_id": "e9a9ffa71767be4c24390ac372bec067e3033b8a1e3bff7afaebf96a04ed8566",
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "started_at": "2026-11-26T16:06:39.503436161Z",
+      "frontend_ip": null
+    },
+    "postgres": {
+      "container_id": "32dbaf1da27dea95922541764322085636ad1cc49542b41185b3a4e539f08100",
+      "image_id": "sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777",
+      "started_at": "2026-11-09T15:32:12.334437514Z",
+      "frontend_ip": null
+    },
+    "redis": {
+      "container_id": "8b0ebbccaa4cfb3f326b8ce008ce0f15e3e8b534c1ba95aebf0ae3af03ce7e1f",
+      "image_id": "sha256:e7723ff73d963f5cc6d9c4643ea3d989527a402a319239054e9472a7fb9219a2",
+      "started_at": "2026-11-09T15:32:12.413908343Z",
+      "frontend_ip": null
+    },
+    "gateway": {
+      "container_id": "bebf6af430e51a6015e3ad69a50213f1fe9a4768bc4685fd17f883f01c198669",
+      "image_id": "sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10",
+      "started_at": "2026-11-09T15:32:12.341975586Z",
+      "frontend_ip": "172.20.0.3"
+    }
+  },
+  "runtime_unchanged": true,
+  "migration_required": false,
+  "deployed": false,
+  "activation_authorized": false,
+  "release_directory": "/opt/hyperline-ott/genre-cms/deploy/releases/portrait-compact-20261126T163444Z-e66a301325b6",
+  "build_strategy": "Exact immutable deployed dependency bases; byte-identical committed package files; clean production rebuild of committed frontend source"
+}

@@ -1,0 +1,36 @@
+{
+  "tables": {
+    "movies": {
+      "sha256": "e776035f4046455b535e10822f021c6455e633632fdeccf6a3d5a8a46d68ed32",
+      "rows": 26
+    },
+    "series": {
+      "sha256": "67ee3a4e06f5c98f3563ff18f8c3959d774f8cce12893aff01944a1a9d3c4753",
+      "rows": 2
+    },
+    "seasons": {
+      "sha256": "b2cd31c33c1a7ad1611f8c93bda3ce0160f70096a279885473408375995af726",
+      "rows": 2
+    },
+    "series_episodes": {
+      "sha256": "356ca52c6609e95475ce549e7e95920804793b0466da1a83b7ebbd13abea37c0",
+      "rows": 1
+    },
+    "video_sources": {
+      "sha256": "505af85fdcdec5a9281cf4fb1a0be5024503bcd738aa2f58d816294184b99f5e",
+      "rows": 27
+    },
+    "genres": {
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": 0
+    },
+    "movie_genre": {
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": 0
+    },
+    "series_genre": {
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rows": 0
+    }
+  }
+}

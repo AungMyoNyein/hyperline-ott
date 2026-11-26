@@ -1,0 +1,39 @@
+{
+  "services": {
+    "web": {
+      "image": "sha256:b034610479a96457a220619e468223786a90cf900dbcb80125cd8cddfd62dff2",
+      "pull_policy": "never",
+      "networks": {
+        "frontend": {
+          "ipv4_address": "172.20.0.5"
+        }
+      }
+    },
+    "cms": {
+      "image": "sha256:a5a503f06f212b6e189f1d8e37d7567320485f784999b1d79797cf462b16e54e",
+      "pull_policy": "never",
+      "networks": {
+        "frontend": {
+          "ipv4_address": "172.20.0.4"
+        }
+      }
+    },
+    "api": {
+      "image": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "pull_policy": "never",
+      "networks": {
+        "frontend": {
+          "ipv4_address": "172.20.0.2"
+        }
+      }
+    },
+    "worker": {
+      "image": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "pull_policy": "never"
+    },
+    "scheduler": {
+      "image": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "pull_policy": "never"
+    }
+  }
+}

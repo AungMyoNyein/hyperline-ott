@@ -97,9 +97,10 @@ export default function ContentTools({
                     : "No genre assigned"}
                 </li>
                 <li>
-                  {m.poster_url
-                    ? "Poster URL configured"
-                    : "Poster missing — fallback shown"}
+                  {!m.poster_url ||
+                  /^https:\/\/i\.ytimg\.com\//.test(m.poster_url)
+                    ? "Missing portrait artwork — manual review required"
+                    : "Poster URL configured — verify 2:3 in Artwork previews"}
                 </li>
                 <li>
                   {m.backdrop_url

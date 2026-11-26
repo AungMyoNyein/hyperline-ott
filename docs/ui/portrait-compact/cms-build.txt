@@ -1,0 +1,66 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  364.2kB
+Step 1/6 : FROM sha256:a5a503f06f212b6e189f1d8e37d7567320485f784999b1d79797cf462b16e54e
+ ---> a5a503f06f21
+Step 2/6 : WORKDIR /app
+ ---> Running in fd88c207e836
+ ---> Removed intermediate container fd88c207e836
+ ---> bf9cc4393e96
+Step 3/6 : COPY . .
+ ---> 080c789f558f
+Step 4/6 : ARG NEXT_PUBLIC_API_URL
+ ---> Running in 28b7adb32c0f
+ ---> Removed intermediate container 28b7adb32c0f
+ ---> bb0596cdb1dc
+Step 5/6 : RUN rm -rf .next && NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL npm run build
+ ---> Running in 5620c45c5775
+
+> build
+> next build
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+   ▲ Next.js 15.5.29
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 25.3s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/4) ...
+   Generating static pages (1/4) 
+   Generating static pages (2/4) 
+   Generating static pages (3/4) 
+ ✓ Generating static pages (4/4)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    13.9 kB         117 kB
+└ ○ /_not-found                            991 B         104 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/255-73938ce8a8eac1ad.js       46.6 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)           1.9 kB
+
+
+○  (Static)  prerendered as static content
+
+[91mnpm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+npm notice To update run: npm install -g npm@12.2.3
+npm notice
+[0m ---> Removed intermediate container 5620c45c5775
+ ---> ed79d09567a6
+Step 6/6 : LABEL org.opencontainers.image.revision=e66a301325b6462cc0b74132d4b13f158eee9880
+ ---> Running in c75c20eb40bc
+ ---> Removed intermediate container c75c20eb40bc
+ ---> 1d5ccc789aed
+Successfully built 1d5ccc789aed
+Successfully tagged hyperline-cms:portrait-compact-20261126T163444Z-e66a301325b6
