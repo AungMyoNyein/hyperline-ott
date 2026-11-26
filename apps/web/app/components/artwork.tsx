@@ -15,10 +15,15 @@ export default function Artwork({
   priority?: boolean;
 }) {
   const [failed, setFailed] = useState("");
+  const [landscape, setLandscape] = useState("");
   const safe = !!src && /^(https?:\/\/|\/(?!\/))/.test(src);
+  const landscapePreview =
+    shape === "poster" &&
+    (landscape === src || (!!src && /^https:\/\/i\.ytimg\.com\//.test(src)));
   return (
     <div
       className={`artwork artwork-${shape}`}
+      data-landscape-preview={landscapePreview ? "true" : undefined}
       data-youtube-thumbnail={
         !!src && /^https:\/\/i\.ytimg\.com\//.test(src) ? "true" : undefined
       }
@@ -36,6 +41,13 @@ export default function Artwork({
               : "(max-width: 600px) 45vw, (max-width: 1000px) 25vw, 220px"
           }
           priority={priority}
+          onLoad={(event) => {
+            if (
+              event.currentTarget.naturalWidth >
+              event.currentTarget.naturalHeight
+            )
+              setLandscape(src!);
+          }}
           onError={() => setFailed(src!)}
         />
       ) : (
@@ -44,6 +56,12 @@ export default function Artwork({
             H<span>│</span>L
           </span>
           <span>{title}</span>
+        </div>
+      )}
+      {landscapePreview && failed !== src && (
+        <div className="artwork-preview-caption" aria-hidden="true">
+          <span>Landscape preview</span>
+          <strong>{title}</strong>
         </div>
       )}
     </div>

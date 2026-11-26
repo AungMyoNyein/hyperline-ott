@@ -15,7 +15,7 @@ function MovieCard({
   const detailsHref = `/movies/${encodeURIComponent(m.slug)}${catalogHref ? `?from=${encodeURIComponent(catalogHref)}` : ""}`;
   // YouTube's native 16:9 preview avoids the baked-in bands in hqdefault.
   // Keep supplied portrait posters intact and load all artwork at its origin.
-  const preview = m.poster_url?.replace(
+  const preview = (m.poster_url || m.backdrop_url)?.replace(
     /^(https:\/\/i\.ytimg\.com\/vi\/[A-Za-z0-9_-]{11}\/)(?:hqdefault|sddefault|default)\.jpg$/,
     "$1mqdefault.jpg",
   );
@@ -27,7 +27,7 @@ function MovieCard({
         aria-label={`${m.title} — details`}
       >
         <div className="card-image">
-          <Artwork src={preview} title={m.title} shape="landscape" />
+          <Artwork src={preview} title={m.title} shape="poster" />
           <span className="card-type">Movie</span>
           <span className="card-reveal" aria-hidden="true">
             Explore title ↗
@@ -72,9 +72,9 @@ function SeriesCard({ series: s }: { series: Series }) {
       >
         <div className="card-image">
           <Artwork
-            src={s.poster_url}
+            src={s.poster_url || s.backdrop_url}
             title={s.title}
-            shape={s.category === "vertical" ? "vertical" : "poster"}
+            shape="poster"
           />
           <span className="card-type">
             {s.category === "vertical" ? "Vertical drama" : "Series"}
@@ -84,7 +84,7 @@ function SeriesCard({ series: s }: { series: Series }) {
           </span>
         </div>
         <div className="card-body">
-          <h3>{s.title}</h3>
+          <h3 lang={contentLang(s.title)}>{s.title}</h3>
           <p className="muted">
             {[
               s.episode_count != null ? `${s.episode_count} episodes` : null,
@@ -194,7 +194,7 @@ export function ContinueWatchingRow({
                   : row.backdrop_url || row.poster_url
               }
               title={title}
-              shape="landscape"
+              shape={ep ? "landscape" : "poster"}
             />
             <Progress
               position={row.position_seconds}

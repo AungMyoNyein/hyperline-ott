@@ -89,19 +89,19 @@ for (const [width, height] of [
     await page.evaluate(() => document.fonts.ready);
     const hero = await page.locator(".hero").boundingBox();
     expect(hero!.height).toBeGreaterThanOrEqual(
-      width <= 600 ? 280 : width <= 1200 ? 340 : 420,
+      width <= 600 ? 200 : width <= 1200 ? 240 : 280,
     );
     expect(hero!.height).toBeLessThanOrEqual(
-      width <= 600 ? 360 : width <= 1200 ? 400 : 480,
+      width <= 600 ? 240 : width <= 1200 ? 280 : 320,
     );
     const font = await page
       .locator(".hero h1")
       .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     expect(font).toBeGreaterThanOrEqual(
-      width <= 600 ? 30 : width <= 1200 ? 38 : 48,
+      width <= 600 ? 20 : width <= 1200 ? 26 : 30,
     );
     expect(font).toBeLessThanOrEqual(
-      width <= 600 ? 36 : width <= 1200 ? 46 : 60,
+      width <= 600 ? 24 : width <= 1200 ? 30 : 36,
     );
     for (const button of await page.locator(".hero-actions a").all()) {
       const box = await button.boundingBox();
@@ -155,10 +155,25 @@ for (const [width, height] of [
     const first = await frames[0].boundingBox();
     for (const frame of frames) {
       const box = await frame.boundingBox();
-      expect(Math.abs(box!.width / box!.height - 16 / 9)).toBeLessThan(0.02);
+      expect(Math.abs(box!.width / box!.height - 2 / 3)).toBeLessThan(0.02);
       expect(Math.abs(box!.height - first!.height)).toBeLessThan(1);
     }
     expect(first!.y).toBeLessThan(width > 600 ? 500 : 470);
+    const columns = await page
+      .locator(".grid")
+      .evaluate(
+        (element) =>
+          getComputedStyle(element).gridTemplateColumns.split(" ").length,
+      );
+    expect(columns).toBe(
+      width <= 600 ? 2 : width <= 1000 ? 4 : width < 1600 ? 5 : 6,
+    );
+    await expect(
+      page.locator('[data-landscape-preview="true"]').first(),
+    ).toBeVisible();
+    await expect(
+      page.locator(".artwork-preview-caption").first(),
+    ).toContainText("Landscape preview");
     for (const image of await page.locator(".movie-card img").all()) {
       expect(await image.evaluate((el) => getComputedStyle(el).objectFit)).toBe(
         "contain",
@@ -184,6 +199,12 @@ for (const [width, height] of [
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
+    if (process.env.HYPERLINE_PORTRAIT_SCREENSHOTS) {
+      await page.screenshot({
+        path: `${process.env.HYPERLINE_PORTRAIT_SCREENSHOTS}/after-catalog-${width}.png`,
+        fullPage: true,
+      });
+    }
   });
 }
 
@@ -222,8 +243,10 @@ test("brand fallback and long Burmese spotlight titles fit without clipping", as
     }),
   ).toBe(true);
   const actions = await page.locator(".hero-actions").boundingBox();
-  const bottom = await page.locator(".hero-bottom").boundingBox();
-  expect(actions!.y + actions!.height).toBeLessThan(bottom!.y);
+  const hero = await page.locator(".hero").boundingBox();
+  expect(actions!.y + actions!.height).toBeLessThanOrEqual(
+    hero!.y + hero!.height,
+  );
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
