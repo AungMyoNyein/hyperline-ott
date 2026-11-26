@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "render_only_no_activation": true,
+  "runtime_inputs": {
+    "/opt/hyperline-ott/deploy/releases/reinstall-catalog-20261121T045107Z-2761b7cfebb7/private/candidate.compose.json": "0c1c11bb346ff3e7fbeb5f4f42e3dd2ccc9fc7b53532dd603fd4a774b458c8db",
+    "/opt/hyperline-ott/deploy/releases/uat-compact-20261122T105516Z-edb8b98bd846/deployment/candidate.compose.json": "6fa9c613c4178b5cfc6aec41eb6a201f3211db783e3f26a7e7fa1d7b3edda178",
+    "/opt/hyperline-ott/genre-cms/deploy/reports/uat-stateful-v5-20261126T160400Z/candidate.compose.json": "5c9179e9b03dc63ac210ce9f9dd2d128db451a1c1f43edf968ff02467bedc726"
+  },
+  "overrides": {
+    "candidate.compose.json": "da0613eaadb9d8e6377d3b7b2a20b6c824d70e0a94809b2ac01971825d2f0c11",
+    "rollback.compose.json": "4d7853ddb8dda33933f5731dbd47106b99db25e41f571279201eb2203ca53780"
+  }
+}

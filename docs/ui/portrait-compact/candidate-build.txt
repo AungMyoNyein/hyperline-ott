@@ -1,0 +1,35 @@
+{
+  "release_directory": "/opt/hyperline-ott/genre-cms/deploy/releases/portrait-compact-20261126T163444Z-e66a301325b6",
+  "images": {
+    "web": {
+      "image_id": "sha256:78d8b736e6b43db61bda002922bba32191c4a9b4b56d8c82d2b456501c2fcb1c",
+      "tag": "hyperline-web:portrait-compact-20261126T163444Z-e66a301325b6",
+      "tree": "061a953ae7f4eaac2a425e7aa14393f23acab197",
+      "source_commit": "e66a301325b6462cc0b74132d4b13f158eee9880",
+      "dependency_base_image": "sha256:b034610479a96457a220619e468223786a90cf900dbcb80125cd8cddfd62dff2"
+    },
+    "cms": {
+      "image_id": "sha256:1d5ccc789aede1407326aea20966364831d4bad90eed631a4dd1d29766cb3a79",
+      "tag": "hyperline-cms:portrait-compact-20261126T163444Z-e66a301325b6",
+      "tree": "305da9a2c8710c29c2d1982d56c49563e5cc12fe",
+      "source_commit": "e66a301325b6462cc0b74132d4b13f158eee9880",
+      "dependency_base_image": "sha256:a5a503f06f212b6e189f1d8e37d7567320485f784999b1d79797cf462b16e54e"
+    },
+    "api": {
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "reused_unchanged": true,
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982"
+    },
+    "worker": {
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "reused_unchanged": true,
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982"
+    },
+    "scheduler": {
+      "image_id": "sha256:db69c7011b71b78cab7ccfe02a7ea4a6a7721ac99567632dd8895b05995fbaa6",
+      "reused_unchanged": true,
+      "tree": "c99cb9a31031d10aad9b2fdcc5309f962a45b982"
+    }
+  },
+  "deployed": false
+}

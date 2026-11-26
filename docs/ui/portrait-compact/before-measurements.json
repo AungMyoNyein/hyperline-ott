@@ -1,0 +1,37 @@
+[
+  {
+    "width": 360,
+    "hero_height": 320,
+    "poster_ratio": 1.7777777777777777,
+    "columns": 2,
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "hero_height": 320,
+    "poster_ratio": 1.7777777777777777,
+    "columns": 2,
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "hero_height": 380,
+    "poster_ratio": 1.7778730703259005,
+    "columns": 4,
+    "overflow": false
+  },
+  {
+    "width": 1366,
+    "hero_height": 460,
+    "poster_ratio": 1.7778977681785457,
+    "columns": 5,
+    "overflow": false
+  },
+  {
+    "width": 1920,
+    "hero_height": 460,
+    "poster_ratio": 1.7779497559233242,
+    "columns": 6,
+    "overflow": false
+  }
+]

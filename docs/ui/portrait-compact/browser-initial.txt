@@ -1,0 +1,183 @@
+
+   INFO  Preparing database.  
+
+  Creating migration table ...................................... 14.43ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table .......................... 14.85ms DONE
+  0001_01_01_000001_create_cache_table .......................... 10.69ms DONE
+  0001_01_01_000002_create_jobs_table ........................... 13.55ms DONE
+  2026_11_08_000100_create_rbac_tables .......................... 29.52ms DONE
+  2026_11_08_000200_add_ott_fields_to_users_table ............... 10.05ms DONE
+  2026_11_08_000300_create_catalog_tables ....................... 26.79ms DONE
+  2026_11_08_000400_create_viewer_tables ........................ 26.79ms DONE
+  2026_11_08_000500_create_admin_audit_logs_table ................ 7.40ms DONE
+  2026_11_08_124741_create_personal_access_tokens_table .......... 7.05ms DONE
+  2026_11_10_000100_create_series_tables ........................ 78.96ms DONE
+  2026_11_10_120000_add_seasons_and_series_genres ............... 53.42ms DONE
+  2026_11_10_120100_add_episode_watch_progress .................. 31.80ms DONE
+  2026_11_10_120200_add_playable_owner_checks ................... 33.29ms DONE
+  2026_11_22_120000_add_genre_management_fields ................. 11.25ms DONE
+
+
+> build
+> next build
+
+   ▲ Next.js 15.5.29
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 34.8s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/11) ...
+   Generating static pages (2/11) 
+   Generating static pages (5/11) 
+   Generating static pages (8/11) 
+ ✓ Generating static pages (11/11)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    3.23 kB         119 kB
+├ ○ /_not-found                            989 B         104 kB
+├ ○ /genres                              1.96 kB         108 kB
+├ ƒ /login                               2.91 kB         109 kB
+├ ○ /movies                              2.25 kB         118 kB
+├ ƒ /movies/[slug]                       4.35 kB         116 kB
+├ ○ /my-list                             4.02 kB         116 kB
+├ ○ /search                              1.23 kB         117 kB
+├ ○ /series                                835 B         116 kB
+├ ƒ /series/[slug]                          5 kB         117 kB
+└ ƒ /watch                                7.4 kB         114 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/937-4fc255339cc34134.js       46.6 kB
+  ├ chunks/daf3b4e7-7856fc537451f355.js  54.2 kB
+  └ other shared chunks (total)          2.04 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+> build
+> next build
+
+   ▲ Next.js 15.5.29
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 11.9s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/4) ...
+   Generating static pages (1/4) 
+   Generating static pages (2/4) 
+   Generating static pages (3/4) 
+ ✓ Generating static pages (4/4)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    13.8 kB         117 kB
+└ ○ /_not-found                            989 B         104 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/937-4fc255339cc34134.js       46.6 kB
+  ├ chunks/daf3b4e7-7856fc537451f355.js  54.2 kB
+  └ other shared chunks (total)           1.9 kB
+
+
+○  (Static)  prerendered as static content
+
+
+> test:e2e
+> playwright test premium-visual.spec.ts --update-snapshots
+
+
+Running 11 tests using 1 worker
+
+(node:378349) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-home-desktop.png is re-generated, writing actual.
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-catalog-desktop.png is re-generated, writing actual.
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-cms-movies-desktop.png is re-generated, writing actual.
+  ✓   1 ../../tests/e2e/premium-visual.spec.ts:254:3 › visual major pages desktop (16.9s)
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-home-mobile.png is re-generated, writing actual.
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-catalog-mobile.png is re-generated, writing actual.
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-cms-movies-mobile.png is re-generated, writing actual.
+  ✓   2 ../../tests/e2e/premium-visual.spec.ts:254:3 › visual major pages mobile (8.9s)
+  ✓   3 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 360px (4.3s)
+  ✓   4 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 390px (4.6s)
+  ✓   5 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 768px (4.2s)
+  ✓   6 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 1366px (4.8s)
+  ✓   7 ../../tests/e2e/premium-visual.spec.ts:292:3 › responsive pages fit 1920px (4.9s)
+/opt/hyperline-ott/genre-cms/docs/ui/screenshots/after-empty-home-mobile.png is re-generated, writing actual.
+  ✓   8 ../../tests/e2e/premium-visual.spec.ts:327:1 › branded fallback, keyboard navigation, mobile menu and reduced motion (1.6s)
+  ✓   9 ../../tests/e2e/premium-visual.spec.ts:355:1 › authenticated player fails closed without fetching media; seasons and search navigate (4.5s)
+  ✓  10 ../../tests/e2e/premium-visual.spec.ts:405:1 › CMS delete confirmation traps focus, cancels safely, and preserves unsaved changes across sections (2.1s)
+  ✓  11 ../../tests/e2e/premium-visual.spec.ts:443:1 › failed artwork falls back without an application image proxy (791ms)
+
+  11 passed (59.7s)
+
+> test:e2e
+> playwright test
+
+
+Running 77 tests using 1 worker
+
+  -   1 ../../tests/e2e/cdn.spec.ts:7:1 › signed HttpOnly cookies authorize nested HLS and renew without exposing tokens
+(node:379120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 360px (5.0s)
+  ✓   3 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 390px (4.5s)
+  ✓   4 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 768px (4.5s)
+  ✓   5 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 1366px (4.3s)
+  ✓   6 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 1920px (4.9s)
+  ✓   7 ../../tests/e2e/compact-ui.spec.ts:211:1 › brand fallback and long Burmese spotlight titles fit without clipping (1.6s)
+  ✓   8 ../../tests/e2e/compact-ui.spec.ts:257:1 › mixed artwork reserves its dimensions while images load or fail (895ms)
+  ✓   9 ../../tests/e2e/compact-ui.spec.ts:289:1 › small catalogs hide covered featured rows and empty series sections (985ms)
+  ✓  10 ../../tests/e2e/formats.spec.ts:30:1 › DASH sources play through dash.js with the signed-session transport (3.8s)
+  ✓  11 ../../tests/e2e/formats.spec.ts:50:1 › YouTube sources render the embed player instead of the video element (2.6s)
+  ✓  12 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 360px (16.3s)
+  ✓  13 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 390px (15.6s)
+  ✓  14 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 768px (16.4s)
+  ✓  15 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 1366px (22.8s)
+  ✓  16 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 1920px (18.8s)
+  -  17 ../../tests/e2e/imported-catalog.spec.ts:4:1 › imported Myanmar draft is CMS-only; isolated publication exposes Unicode, attribution and official player contract
+  ✓  18 ../../tests/e2e/integration.spec.ts:18:1 › CMS authenticates, validates, creates, edits, publishes, deletes and revokes logout (8.2s)
+  ✓  19 ../../tests/e2e/integration.spec.ts:96:1 › public catalog filters and detail show published content, and mobile layout fits (1.9s)
+  ✓  20 ../../tests/e2e/integration.spec.ts:126:1 › authorized generated HLS loads variants, advances playback, supports quality and fullscreen (5.1s)
+  ✓  21 ../../tests/e2e/integration.spec.ts:173:1 › browser blocks missing CDN CORS and player reports an actionable error (2.7s)
+  ✓  22 ../../tests/e2e/integration.spec.ts:207:3 › progress 503 read and save failures keep authorized video and controls available (5.3s)
+  ✓  23 ../../tests/e2e/integration.spec.ts:207:3 › progress 403 read and save failures keep authorized video and controls available (5.2s)
+  ✓  24 ../../tests/e2e/integration.spec.ts:207:3 › progress network read and save failures keep authorized video and controls available (5.2s)
+  ✓  25 ../../tests/e2e/movies-catalog.spec.ts:68:1 › search validates separately and recovers for the same query, empty search, Burmese, English and no results (2.8s)
+  ✓  26 ../../tests/e2e/movies-catalog.spec.ts:110:1 › loading, retry and submitting an unchanged query recover after request errors (1.6s)
+  ✓  27 ../../tests/e2e/movies-catalog.spec.ts:131:1 › genre, featured, query and page survive details return, browser back and reload (3.5s)
+  ✓  28 ../../tests/e2e/movies-catalog.spec.ts:185:3 › catalog layout and accessible actions at 360px (1.7s)
+  ✓  29 ../../tests/e2e/movies-catalog.spec.ts:185:3 › catalog layout and accessible actions at 390px (1.5s)
+  ✓  30 ../../tests/e2e/movies-catalog.spec.ts:185:3 › catalog layout and accessible actions at 768px (1.7s)
+  ✓  31 ../../tests/e2e/movies-catalog.spec.ts:185:3 › catalog layout and accessible actions at 1366px (3.3s)
+  ✓  32 ../../tests/e2e/movies-catalog.spec.ts:185:3 › catalog layout and accessible actions at 1920px (2.2s)
+  ✓  33 ../../tests/e2e/movies-catalog.spec.ts:218:1 › Burmese titles use the bundled Unicode font (979ms)
+  ✓  34 ../../tests/e2e/movies-catalog.spec.ts:249:1 › detail navigation carries only public filters and handles repeated return parameters (2.3s)
+  ✓  35 ../../tests/e2e/phase-one.spec.ts:39:1 › My List adds, lists, removes and expires a revoked in-memory session (3.3s)
+  ✓  36 ../../tests/e2e/phase-one.spec.ts:94:1 › movie progress resumes, throttles event bursts, saves on pause, and completion leaves home (6.1s)
+  ✓  37 ../../tests/e2e/phase-one.spec.ts:205:1 › CMS protects unsaved edits, applies API filters, exposes audit history and handles revocation (5.3s)
+  ✓  38 ../../tests/e2e/phase-two.spec.ts:19:1 › admin creates a series with a season and episode in the CMS, publishes it, and it becomes publicly browsable (7.2s)
+  ✓  39 ../../tests/e2e/phase-two.spec.ts:195:1 › viewer episode playback records progress, resumes and feeds continue watching (4.2s)
+  ✓  40 ../../tests/e2e/player-errors.spec.ts:28:1 › progress 401 expires authentication and removes authorized media (3.1s)
+  ✓  41 ../../tests/e2e/player-errors.spec.ts:60:3 › renewal 403 stops Local test pattern playback (5.4s)
+  ✓  42 ../../tests/e2e/player-errors.spec.ts:60:3 › renewal 403 stops Local DASH pattern playback (5.7s)
+  ✓  43 ../../tests/e2e/player-errors.spec.ts:60:3 › renewal 410 stops Local test pattern playback (7.1s)
+  ✓  44 ../../tests/e2e/player-errors.spec.ts:60:3 › renewal 401 stops Local test pattern playback (6.5s)
+  ✓  45 ../../tests/e2e/player-errors.spec.ts:112:1 › fatal DASH manifest failure keeps playback unavailable (5.6s)
+  ✘  46 ../../tests/e2e/portrait-surfaces.spec.ts:15:3 › portrait genre discovery and saved movie navigation at 360px (1.0m)
+(node:383577) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  47 ../../tests/e2e/portrait-surfaces.spec.ts:15:3 › portrait genre discovery and saved movie navigation at 390px (1.0m)
+(node:384272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  48 ../../tests/e2e/portrait-surfaces.spec.ts:15:3 › portrait genre discovery and saved movie navigation at 768px (1.0m)
+(node:385158) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Terminated

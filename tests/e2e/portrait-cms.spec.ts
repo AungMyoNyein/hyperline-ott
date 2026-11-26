@@ -61,8 +61,17 @@ test("CMS flags missing and off-ratio portraits without changing artwork URLs", 
             movies: { total: 3 },
             viewers: { playback_sessions_24h: 0 },
             genres: 0,
+            recent_activity: [],
           },
         },
+      });
+    if (pathname === "/admin/homepage")
+      return route.fulfill({
+        json: { data: { sections: ["trending", "latest"] } },
+      });
+    if (pathname === "/admin/series")
+      return route.fulfill({
+        json: { data: [], meta: { current_page: 1, last_page: 1 } },
       });
     return route.fulfill({ json: { data: [] } });
   });
@@ -78,14 +87,15 @@ test("CMS flags missing and off-ratio portraits without changing artwork URLs", 
     .getByRole("navigation", { name: "Studio navigation" })
     .getByRole("button", { name: "Artwork", exact: true })
     .click();
+  const artwork = page.getByRole("region", { name: "Artwork", exact: true });
   await expect(
-    page.getByText(/Missing portrait artwork — manual review required/),
+    artwork.getByText(/Missing portrait artwork — manual review required/),
   ).toHaveCount(1);
   await expect(
-    page.getByText(/Portrait ratio needs manual review/),
+    artwork.getByText(/Portrait ratio needs manual review/),
   ).toHaveCount(1);
   for (const movie of movies) {
-    const preview = page.locator(`img[src="${movie.poster_url}"]`).first();
+    const preview = artwork.locator(`img[src="${movie.poster_url}"]`).first();
     await preview.scrollIntoViewIfNeeded();
     await expect(preview).toHaveAttribute("src", movie.poster_url);
   }

@@ -1,0 +1,52 @@
+
+   INFO  Preparing database.  
+
+  Creating migration table ...................................... 10.02ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table .......................... 19.24ms DONE
+  0001_01_01_000001_create_cache_table ........................... 9.33ms DONE
+  0001_01_01_000002_create_jobs_table ............................ 9.73ms DONE
+  2026_11_08_000100_create_rbac_tables .......................... 17.84ms DONE
+  2026_11_08_000200_add_ott_fields_to_users_table ................ 6.98ms DONE
+  2026_11_08_000300_create_catalog_tables ....................... 20.60ms DONE
+  2026_11_08_000400_create_viewer_tables ........................ 20.06ms DONE
+  2026_11_08_000500_create_admin_audit_logs_table ................ 8.54ms DONE
+  2026_11_08_124741_create_personal_access_tokens_table .......... 5.90ms DONE
+  2026_11_10_000100_create_series_tables ........................ 74.69ms DONE
+  2026_11_10_120000_add_seasons_and_series_genres ............... 50.12ms DONE
+  2026_11_10_120100_add_episode_watch_progress .................. 41.92ms DONE
+  2026_11_10_120200_add_playable_owner_checks ................... 30.06ms DONE
+  2026_11_22_120000_add_genre_management_fields .................. 9.00ms DONE
+
+
+> test:e2e
+> playwright test compact-ui.spec.ts portrait-surfaces.spec.ts portrait-cms.spec.ts genre-cms.spec.ts
+
+
+Running 19 tests using 1 worker
+
+(node:400866) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 360px (5.0s)
+  ✓   2 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 390px (4.2s)
+  ✓   3 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 768px (4.8s)
+  ✓   4 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 1366px (4.6s)
+  ✓   5 ../../tests/e2e/compact-ui.spec.ts:82:3 › compact spotlight, toolbar, media and accessibility at 1920px (4.7s)
+  ✓   6 ../../tests/e2e/compact-ui.spec.ts:211:1 › brand fallback and long Burmese spotlight titles fit without clipping (1.5s)
+  ✓   7 ../../tests/e2e/compact-ui.spec.ts:257:1 › mixed artwork reserves its dimensions while images load or fail (1.6s)
+  ✓   8 ../../tests/e2e/compact-ui.spec.ts:289:1 › small catalogs hide covered featured rows and empty series sections (953ms)
+  ✓   9 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 360px (15.9s)
+  ✓  10 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 390px (16.0s)
+  ✓  11 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 768px (17.0s)
+  ✓  12 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 1366px (18.1s)
+  ✓  13 ../../tests/e2e/genre-cms.spec.ts:11:3 › genre CMS, Unicode discovery and accessibility at 1920px (18.7s)
+  ✓  14 ../../tests/e2e/portrait-cms.spec.ts:3:1 › CMS flags missing and off-ratio portraits without changing artwork URLs (1.5s)
+  ✓  15 ../../tests/e2e/portrait-surfaces.spec.ts:15:3 › portrait genre discovery and saved movie navigation at 360px (2.1s)
+  ✓  16 ../../tests/e2e/portrait-surfaces.spec.ts:15:3 › portrait genre discovery and saved movie navigation at 390px (2.3s)
+  ✓  17 ../../tests/e2e/portrait-surfaces.spec.ts:15:3 › portrait genre discovery and saved movie navigation at 768px (2.1s)
+  ✓  18 ../../tests/e2e/portrait-surfaces.spec.ts:15:3 › portrait genre discovery and saved movie navigation at 1366px (2.3s)
+  ✓  19 ../../tests/e2e/portrait-surfaces.spec.ts:15:3 › portrait genre discovery and saved movie navigation at 1920px (3.1s)
+
+  19 passed (2.1m)
